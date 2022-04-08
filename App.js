@@ -1,55 +1,61 @@
-import MaterialIcons from "@expo/vector-icons/MaterialIcons";
-import AppLoading from "expo-app-loading";
-import * as Font from "expo-font";
-import { useEffect, useState } from "react";
-import { StyleSheet, View } from "react-native";
-import { Button, CheckBox } from "react-native-elements";
+import 'react-native-gesture-handler'
+import React from 'react';
+import LoginScreen from './components/LoginScreen'
+import { NavigationContainer } from '@react-navigation/native'
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
+import { Ionicons } from '@expo/vector-icons';
+import { createStackNavigator } from '@react-navigation/stack';
 
-export default function AppContainer() {
-  const [ready, setReady] = useState(false);
+const Tab = createBottomTabNavigator();
+const Stack = createStackNavigator();
 
-  useEffect(() => {
-    (async () => {
-      try {
-        await Font.loadAsync(MaterialIcons.font);
-      } catch (e) {
-        // error caching font, not a big deal, will load on the fly
-      } finally {
-        setReady(true);
-      }
-    })();
-  }, []);
 
-  if (ready) {
-    return <App />;
-  }
-  return <AppLoading />;
+class App extends React.Component {
+    constructor() {
+        super()
+
+        this.state = {
+            isLoggedIn: false, 
+            isRegistering: false,
+            userId: "",
+        }
+
+        this.loggedIn = this.loggedIn.bind(this)
+        this.showRegister = this.showRegister.bind(this)
+
+    }
+
+    loggedIn = (token, id) => {
+        this.setState({
+            isLoggedIn: true,
+            userId: id
+        })
+    }
+
+    logOut = () => {
+        this.setState({
+            isLoggedIn: false,
+            userId: ""
+        })
+    }
+
+    showRegister() {
+        if (!this.state.isRegistering) {
+            this.setState({ isRegistering: true })
+            return
+        } else {
+            this.setState({ isRegistering: false })
+            return
+        }
+    }
+
+    render() {
+        return (
+          <LoginScreen loggedIn={this.loggedIn} showRegister={this.showRegister} />
+        );
+    }
 }
 
-function App() {
-  const [checked, setChecked] = useState(false);
+export default App
 
-  return (
-    <View style={styles.container}>
-      <Button
-        raised
-        icon={{ name: "cached", color: "white" }}
-        title="RAISED WITH ICON"
-      />
-      <CheckBox
-        title="Click Here"
-        checked={checked}
-        onPress={() => setChecked((checked) => !checked)}
-      />
-    </View>
-  );
-}
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#fff",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-});
