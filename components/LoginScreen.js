@@ -44,10 +44,17 @@ class LoginScreen extends React.Component {
             password: this.state.password
         }
 
+
+        //console.log(isLoading)
         fetchAPI('api/autobazar/users/login', 'POST', bodyObject).then(result => {
+            console.log(isLoading)
+
             this.setState({
                 isLoading: false
             })
+
+            //console.log(result)
+            
             if (result.auth) {
                 this.props.loggedIn(result.token, result.id)
             }

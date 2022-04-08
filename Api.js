@@ -1,11 +1,10 @@
-fetchAPI = (url, method, bodyObject, token) => {
+fetchAPI = (url, method, bodyObject) => {
     bodyObject = JSON.stringify(bodyObject)
 
     const fetchObject = {
         method: method,
         headers: {
-            'Content-type': 'application/json',
-            'access-token': token
+            'Content-type': 'application/json'
         },
         body: bodyObject
     }
