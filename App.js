@@ -25,7 +25,7 @@ class App extends React.Component {
 
     }
 
-    loggedIn = (token, id) => {
+    loggedIn = (id) => {
         this.setState({
             isLoggedIn: true,
             userId: id

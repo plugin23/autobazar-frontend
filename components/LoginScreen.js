@@ -3,7 +3,7 @@ import { createStackNavigator } from '@react-navigation/stack'
 import { StatusBar } from 'expo-status-bar';
 import React from 'react';
 import { StyleSheet, Text, View, Button, TextInput, Alert, ActivityIndicator } from 'react-native';
-import { fetchAPI } from '../Api'
+import { fetchAPI } from '../Api.js'
 
 const Stack = createStackNavigator()
 
@@ -40,26 +40,21 @@ class LoginScreen extends React.Component {
         })
 
         const bodyObject = {
-            mail: this.state.mail,
+            email: this.state.mail,
             password: this.state.password
         }
 
-
-        //console.log(isLoading)
         fetchAPI('api/autobazar/users/login', 'POST', bodyObject).then(result => {
-            console.log(isLoading)
-
+            //console.log(isLoading)
             this.setState({
                 isLoading: false
             })
-
-            //console.log(result)
             
-            if (result.auth) {
-                this.props.loggedIn(result.token, result.id)
+            if (result.id) {
+                this.props.loggedIn(result.id)
             }
             else { //ak uzivatel zada zle heslo alebo meno
-                Alert.alert("Nesprávne údaje", "Údaje, ktoré ste zadali nie sú správne", [{ text: "OK", onPress: () => { } }])
+                alert("Nesprávne údaje", "Údaje, ktoré ste zadali nie sú správne", [{ text: "OK", onPress: () => { } }])
             }
         })
     }
