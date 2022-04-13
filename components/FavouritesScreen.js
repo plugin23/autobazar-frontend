@@ -20,7 +20,7 @@ const FavouritesScreen = (props) => {
     
     return (
         <View style={styles.container}>
-            <Text>Favourites</Text>
+            <Text>Favouritessss</Text>
         </View>
     );
 }
