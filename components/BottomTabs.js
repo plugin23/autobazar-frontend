@@ -3,7 +3,10 @@ import React from 'react';
 import CarsScreen from './CarsScreen'
 import FavouritesScreen from './FavouritesScreen'
 import AddCarScreen from './AddCarScreen'
+import ProfileScreen from './ProfileScreen'
 import { Ionicons } from '@expo/vector-icons';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 const Tab = createBottomTabNavigator();
@@ -29,7 +32,7 @@ const BottomTabs = (props) => {
                 <Tab.Screen name="Bookmarks" children={() => <FavouritesScreen userId={props.userId}/>}></Tab.Screen>
                 <Tab.Screen name="Add" children={() => <AddCarScreen userId={props.userId}/>}></Tab.Screen>
                 <Tab.Screen name="Search" children={() => <FavouritesScreen userId={props.userId}/>}></Tab.Screen>
-                <Tab.Screen name="Profile" children={() => <CarsScreen userId={props.userId}/>}></Tab.Screen>
+                <Tab.Screen name="Profile" children={() => <ProfileScreen userId={props.userId}/>}></Tab.Screen>
             </Tab.Navigator>
     );
 }
