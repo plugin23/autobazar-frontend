@@ -2,74 +2,80 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack'
 import { StatusBar } from 'expo-status-bar';
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, Text, View, Button, TextInput, Alert, ActivityIndicator, TouchableOpacity} from 'react-native';
-import { ScrollView } from 'react-native-gesture-handler';
 import { fetchAPI } from '../Api'
+import { StyleSheet, View, FlatList, SafeAreaView, ActivityIndicator} from 'react-native';
+import UserItem from './UserItem';
+import FavouriteItem from './FavouriteItem'
+
 
 const Stack = createStackNavigator()
 
 const ProfileScreen = (props) => {
 
-    const [isLoaded, setIsLoaded] = useState(false)    
+    const [isFetching, setIsFetching] = useState(true)
+    const [cars, setCars] = useState([])
 
-    fetchAPI('api/autobazar/users/'+ props.userId, 'GET').then(result => {    
+    useEffect(() => { 
+        fetchCars()
+    }, [])   
+
+    const fetchCars = () => {
+        setIsFetching(true)
         
-        if (result._id) {
-            console.log('naloadovane data')
-            setIsLoaded(true)
-        }
-        else { 
-        Alert.alert("Nepodarilo sa naloadovať dáta!", [{ text: "OK", onPress: () => { } }])
-        }
-    })
+        fetchAPI('api/autobazar/users/'+ props.userId, 'GET').then(result => {    
+
+            if (result[0]._id) {
+                setCars(result)
+                setIsFetching(false)
+            }
+            else { 
+            alert("Nepodarilo sa naloadovať dáta!", [{ text: "OK", onPress: () => { } }])
+            }
+        })
+    }
+
+    const renderItem = (item) => {
+        return (
+            <UserItem car={item.item} />
+
+        )
+    }
+
+    const itemSeparator = () => {
+        return (
+            <View style={styles.separator} />
+        )
+    }
+
     
-    
-    return (       
-        isLoaded ?  (
-        <h1>Nepodarilo sa naloadovať</h1>)
-        :
-        (            
-        <View style={styles.container}>
-            <h1>Profil</h1>
-            <p> niečo</p>
-        </View>
-        ) 
+    return (
+        <SafeAreaView style={styles.container}>
+            {isFetching ? (
+                <ActivityIndicator size="large" />
+            ) : (
+                <FlatList
+                    data={cars}
+                    renderItem={item => renderItem(item)}
+                    keyExtractor={item => item._id.toString()}
+                    ItemSeparatorComponent={itemSeparator}
+                    showsVerticalScrollIndicator={false}
+                    refreshing={isFetching}
+                    onRefresh={fetchCars}
+                />
+            )}
+        </SafeAreaView>
     );
 }
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1,
-        backgroundColor: '#fff',
-        justifyContent: 'center',
         alignItems: 'center',
     },
     separator: {
         marginVertical: 8
     },
-    buttonStyle: {
-        width: 300,
-        height: 50,
-        alignItems: 'center',
-        padding: 15,
-        borderRadius: 100,
-        backgroundColor: 'black'
-    },
-    buttonText: {
-        fontSize: 15,
-        color: '#fff'
-    },
-    inputText: {
-        borderColor: "#b7e4c7",
-        borderWidth: 1,
-        borderRadius: 3,
-        paddingHorizontal: 10,
-        paddingVertical: 8
-    },
-    logo: {
-        fontSize: 50,
-        textAlign: "center",
-        marginBottom: 50
+    loading: {
+        paddingVertical: 50
     }
 });
 
