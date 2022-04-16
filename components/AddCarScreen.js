@@ -17,6 +17,7 @@ const AddCarScreen = (props) => {
     const [doors, seDdoors] = useState(0)
     const [description, setdescription] = useState("")
     const [body, setBody] = useState("") 
+    const [car_model, setcar_model] = useState("") 
     const [isAdded, setIsAdded] = useState(false)
 
 
@@ -29,7 +30,7 @@ const AddCarScreen = (props) => {
 
 
     const addCar = () => {
-        if (carBrand == "" || engineCap == "" || year=="" || mileage=="" || price=="" || doors=="" || description=="" || body=="") {
+        if (carBrand == "" || engineCap == "" || year=="" || mileage=="" || price=="" || doors=="" || description=="" || body=="" || car_model=="") {
             Alert.alert("Prázdne pole", "Prosím vyplňte obe polia", [{ text: "OK", onPress: () => { } }])
             return
         }
@@ -43,7 +44,8 @@ const AddCarScreen = (props) => {
             description: description,
             engine_cap: engineCap,
             car_brand: carBrand,
-            body: body
+            body: body,
+            car_model : car_model
             
         }
 
@@ -67,8 +69,10 @@ const AddCarScreen = (props) => {
             <h1>Pridať inzerát</h1>
             <ScrollView style={styles.buttonMargin}>
                 <TextInput style={styles.inputText} placeholder="Značka" onChangeText={(text) => setCarBrand(text)} />
+                <View style={styles.separator} />                
+                <TextInput style={styles.inputText} placeholder="Model" onChangeText={(text) => setcar_model(text)} />
                 <View style={styles.separator} />
-                <TextInput style={styles.inputText} placeholder="Model" onChangeText={(text) => setEngineCap(text)} />
+                <TextInput style={styles.inputText} placeholder="Výkon" onChangeText={(text) => setEngineCap(text)} />
                 <View style={styles.separator} />
                 <TextInput style={styles.inputText} placeholder="Rok výroby" onChangeText={(text) => setYear(text)} />
                 <View style={styles.separator} />
