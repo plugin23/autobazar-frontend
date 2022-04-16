@@ -8,15 +8,16 @@ import { useNavigation } from '@react-navigation/native';
 
 const CarEdit = (props) => {
     
-    const [userId, setUserId] = useState(props.userId)
-    const [car, setCar] = useState(props.car)
-    const [engineCap, setEngineCap] = useState(props.car.engine_cap)
-    const [year, setYear] = useState(props.car.year)
-    const [mileage, setMileage] = useState(props.car.mileage)
-    const [doors, setDoors] = useState(props.car.doors)
-    const [body, setBody] = useState(props.car.body)
-    const [price, setPrice] = useState(props.car.price)
-    const [description, setDescription] = useState(props.car.description)
+    console.log(props)
+    const [userId, setUserId] = useState(props.route.params.userId)
+    const [car, setCar] = useState(props.route.params.car)
+    const [engineCap, setEngineCap] = useState(props.route.params.engine_cap)
+    const [year, setYear] = useState(props.route.params.year)
+    const [mileage, setMileage] = useState(props.route.params.mileage)
+    const [doors, setDoors] = useState(props.route.params.doors)
+    const [body, setBody] = useState(props.route.params.body)
+    const [price, setPrice] = useState(props.route.params.price)
+    const [description, setDescription] = useState(props.route.params.description)
     const navigation = useNavigation()
 
     const editCar = () => {

@@ -9,7 +9,6 @@ const CarItem = (props) => {
     let imageUrl = {uri : car.image_photos[0]}
     const navigation = useNavigation()
     
-
     return (
         <TouchableOpacity onPress={() => navigation.navigate('carScreen', {car: car, userId: userId})}>
             <View styles={styles.container}>

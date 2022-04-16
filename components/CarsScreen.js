@@ -2,6 +2,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack'
 import { StatusBar } from 'expo-status-bar';
 import CarItem from './CarItem'
+import CarEdit from './CarEdit'
 import React, { useEffect, useState } from 'react';
 import { StyleSheet, View, FlatList, SafeAreaView, ActivityIndicator} from 'react-native';
 import { fetchAPI } from '../Api'
@@ -12,7 +13,6 @@ const Stack = createStackNavigator()
 
 const CarsScreen = (props) => {
 
-    const [userId, setUserId] = useState(props.userId)
     const [cars, setCars] = useState([])
     const [isFetching, setIsFetching] = useState(true)
     
@@ -23,7 +23,6 @@ const CarsScreen = (props) => {
     const fetchCars = () => {
         setIsFetching(true)
 
-        
         fetchAPI('api/autobazar/cars', 'GET', {}).then(result => {
             setCars(result)
             setIsFetching(false)
@@ -64,13 +63,15 @@ const CarsScreen = (props) => {
                 )}
                 </SafeAreaView>
             } />
-            <Stack.Screen name="carScreen" options={{title: ''}}children={(props) =>
+            <Stack.Screen name="carScreen" options={{title: ''}} children={(props) =>
                 <ScrollView>
-                    //{console.log(props)}
                     <CarScreen {...props} />
                 </ScrollView>
             } />
-                
+
+            <Stack.Screen name="carEdit" option={{title: ''}} children={(props) =>
+                <CarEdit {...props}/>
+            } />
         </Stack.Navigator>
         
     );
