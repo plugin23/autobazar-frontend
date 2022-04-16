@@ -1,10 +1,31 @@
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack'
 import { StatusBar } from 'expo-status-bar';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Children } from 'react';
 import { StyleSheet, Text, View, Button, TextInput, Alert, ActivityIndicator, TouchableOpacity} from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 import { fetchAPI } from '../Api'
+
+import { initializeApp } from "firebase/app";
+import {  uploadBytes, getDownloadURL} from "firebase/storage";
+
+
+
+
+
+const firebaseConfig = {
+    apiKey: "AIzaSyC3bvlOlY1gGFWUiSDMg9YA94E8hwGSwuo",
+    authDomain: "mtaa-autobazar-storage.firebaseapp.com",
+    projectId: "mtaa-autobazar-storage",
+    storageBucket: "mtaa-autobazar-storage.appspot.com",
+    messagingSenderId: "276629828442",
+    appId: "1:276629828442:web:876afc5961294466e47963",
+    measurementId: "G-XL77BC1PLX"
+  };
+  
+  // Initialize Firebase
+  initializeApp(firebaseConfig);
+
 
 const Stack = createStackNavigator()
 
@@ -19,6 +40,8 @@ const AddCarScreen = (props) => {
     const [body, setBody] = useState("") 
     const [car_model, setcar_model] = useState("") 
     const [isAdded, setIsAdded] = useState(false)
+    const [image, setImage] = useState(false)
+    const [url, setUrl] = useState("")
 
 
     useEffect(() => { 
@@ -60,6 +83,24 @@ const AddCarScreen = (props) => {
         })
     }
     
+    const handleChange = e  => {
+        if(e.target.files[0]){
+            console.log(e.target.files[0])
+            setImage(e.target.files[0])
+        }
+    };
+
+    const handleUpdate = () => {
+        const file = image
+        uploadBytes(storageRef, file).then((snapshot) => {
+            getDownloadURL(snapshot.ref).then(async (downloadURL) => {            
+               console.log(downloadURL.toString())
+               setUrl(url)
+            });
+        });
+    }
+    
+
     return (
         isAdded ? (
             <h1>uspešne pridaný inzerát</h1>
@@ -86,6 +127,11 @@ const AddCarScreen = (props) => {
                 <View style={styles.separator} />
                 <TextInput style={styles.inputText} placeholder="Popis" onChangeText={(text) => setdescription(text)} />
                 <View style={styles.separator} />
+                <View style={{ paddingVertical: 10 }} />
+                <>
+                <input type="file" onChange={handleChange} />
+                <button onClick={handleUpdate}>Upload</button>
+                </>
                 <TouchableOpacity
                     onPress={addCar}
                     style={styles.buttonStyle}>
@@ -94,7 +140,7 @@ const AddCarScreen = (props) => {
                 <View style={styles.separator} />
             </ScrollView>
             <View style={styles.separator} />
-        </View>
+        </View>        
 )
     );
 }
