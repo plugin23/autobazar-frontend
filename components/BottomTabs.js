@@ -32,7 +32,7 @@ const BottomTabs = (props) => {
                 <Tab.Screen name="Bookmarks" children={() => <FavouritesScreen userId={props.userId}/>}></Tab.Screen>
                 <Tab.Screen name="Add" children={() => <AddCarScreen userId={props.userId}/>}></Tab.Screen>
                 <Tab.Screen name="Search" children={() => <FavouritesScreen userId={props.userId}/>}></Tab.Screen>
-                <Tab.Screen name="Profile" children={() => <ProfileScreen userId={props.userId} logOut={logOut}/>}></Tab.Screen>
+                <Tab.Screen name="Profile" children={() => <ProfileScreen userId={props.userId} logOut={props.logOut} />}></Tab.Screen>
             </Tab.Navigator>
     );
 }

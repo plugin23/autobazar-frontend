@@ -15,6 +15,7 @@ const ProfileScreen = (props) => {
     const [isFetching, setIsFetching] = useState(true)
     const [cars, setCars] = useState([])
 
+
     useEffect(() => { 
         fetchCars()
     }, [])   
@@ -36,7 +37,7 @@ const ProfileScreen = (props) => {
 
     const renderItem = (item) => {
         return (
-            <UserItem car={item.item} />
+            <UserItem car={item.item} logOut={props.logOut} />
 
         )
     }
