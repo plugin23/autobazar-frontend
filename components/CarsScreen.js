@@ -5,15 +5,17 @@ import CarItem from './CarItem'
 import React, { useEffect, useState } from 'react';
 import { StyleSheet, View, FlatList, SafeAreaView, ActivityIndicator} from 'react-native';
 import { fetchAPI } from '../Api'
+import { ScrollView } from 'react-native-gesture-handler';
+import CarScreen from './CarScreen';
 
 const Stack = createStackNavigator()
 
 const CarsScreen = (props) => {
 
+    const [userId, setUserId] = useState(props.userId)
     const [cars, setCars] = useState([])
     const [isFetching, setIsFetching] = useState(true)
-    const [userId, setUserId] = useState(props.userId)
-
+    
     useEffect(() => { 
         fetchCars()
     }, [])
@@ -30,9 +32,9 @@ const CarsScreen = (props) => {
     }
 
     const renderItem = (item) => {
-        //console.log(item.item)
+        //console.log("id: " + props.userId)
         return (
-            <CarItem car={item.item} />
+            <CarItem car={item.item} userId={props.userId}/>
         )
     }
 
@@ -44,21 +46,33 @@ const CarsScreen = (props) => {
 
 
     return (
-        <SafeAreaView style={styles.container}>
-            {isFetching ? (
-                <ActivityIndicator size="large" />
-            ) : (
-                <FlatList
-                    data={cars}
-                    renderItem={item => renderItem(item)}
-                    keyExtractor={item => item._id.toString()}
-                    ItemSeparatorComponent={itemSeparator}
-                    showsVerticalScrollIndicator={false}
-                    refreshing={isFetching}
-                    onRefresh={fetchCars}
-                />
-            )}
-        </SafeAreaView>
+        <Stack.Navigator>
+            <Stack.Screen name="allCars" options={{headerShown: false}} children={(props) =>
+                <SafeAreaView style={styles.container}>
+                    {isFetching ? (
+                        <ActivityIndicator size="large" />
+                    ) : (
+                        <FlatList
+                            data={cars}
+                            renderItem={item => renderItem(item)}
+                            keyExtractor={item => item._id.toString()}
+                            ItemSeparatorComponent={itemSeparator}
+                            showsVerticalScrollIndicator={false}
+                            refreshing={isFetching}
+                            onRefresh={fetchCars}
+                        />
+                )}
+                </SafeAreaView>
+            } />
+            <Stack.Screen name="carScreen" options={{title: ''}}children={(props) =>
+                <ScrollView>
+                    //{console.log(props)}
+                    <CarScreen {...props} />
+                </ScrollView>
+            } />
+                
+        </Stack.Navigator>
+        
     );
 }
 

@@ -1,12 +1,17 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { StyleSheet, Text, View, Image, TouchableOpacity } from 'react-native';
+import CarScreen from './CarScreen'
+import { useNavigation } from '@react-navigation/native';
 
 const CarItem = (props) => {
     const [car, setCar] = useState(props.car)
-    
+    const [userId, setUserId] = useState(props.userId)
     let imageUrl = {uri : car.image_photos[0]}
+    const navigation = useNavigation()
+    
+
     return (
-        <TouchableOpacity>
+        <TouchableOpacity onPress={() => navigation.navigate('carScreen', {car: car, userId: userId})}>
             <View styles={styles.container}>
                 <View>
                     <Image style={styles.image} source={imageUrl} />
