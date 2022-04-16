@@ -3,10 +3,16 @@ import { StyleSheet, Text, View,  TouchableOpacity } from 'react-native';
 
 const UserItem = (props) => {
     const [car, setCar] = useState(props.car)
-    
+    const [isLoggedIn, setisLoggedIn] = useState(false)
+
+
+    const logout = () => {
+        setisLoggedIn(true)
+    }
     
     return (
-        <TouchableOpacity>
+        isLoggedIn ? (<h1>odhlasený</h1>) : (
+            <TouchableOpacity>
             <View styles={styles.container}>
                 <View styles={styles.textContainer}>
                     <View style={styles.separator} />
@@ -18,8 +24,17 @@ const UserItem = (props) => {
                     </View>
                 </View>
             </View>
+            <View style={styles.separator} />
+            <TouchableOpacity
+                        onPress={logout}
+                        style={styles.buttonStyle}>
+                        <Text style={styles.buttonText}>Odhlásiť sa</Text>
+                </TouchableOpacity>
         </TouchableOpacity>
+        )        
+        
     );
+    
 };
 
 const styles = StyleSheet.create({

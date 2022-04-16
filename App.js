@@ -12,7 +12,7 @@ import { createStackNavigator} from '@react-navigation/stack';
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
 
-const App = () => {
+const App = (props) => {
     const [isLoggedIn, setIsLoggedIn] = useState(false)
     const [isRegistering, setIsRegistering] = useState(false)
     const [userId, setUserId] = useState("")
@@ -48,7 +48,7 @@ const App = () => {
                 <NavigationContainer>
                     <Stack.Navigator initialRouteName='Tabs' screenOptions={{ headerShown: false }}>
                         <Stack.Screen name="Home" children={() => <CarsScreen userId={userId}/>}></Stack.Screen>
-                        <Stack.Screen name="Tabs" children={() => <BottomTabs userId={userId}/>}/>
+                        <Stack.Screen name="Tabs" children={() => <BottomTabs userId={userId} logOut={this.logOut()} />}/>
                     </Stack.Navigator>
                 </NavigationContainer>
             )
