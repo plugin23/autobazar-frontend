@@ -44,7 +44,7 @@ const BottomTabs = (props) => {
                             return <Ionicons name={iconName} size={20} color={color} />;
                         }
                     }}
-                    children={() => <CarsScreen userId={props.userId}/>}></Tab.Screen>
+                    children={() => <AddCarScreen userId={props.userId}/>}></Tab.Screen>
                 <Tab.Screen name="Search" 
                     options={{
                         tabBarLabel: 'Search',
@@ -62,7 +62,7 @@ const BottomTabs = (props) => {
                             return <Ionicons name={iconName} size={20} color={color} />;
                         }
                     }}
-                    children={() => <CarsScreen userId={props.userId}/>}></Tab.Screen>
+                    children={() => <ProfileScreen userId={props.userId} logOut={props.logOut}/>}></Tab.Screen>
             </Tab.Navigator>
     );
 }

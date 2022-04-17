@@ -117,7 +117,7 @@ const CarScreen = (props) => {
                 </View>
             </View>
             <View style={styles.headingContainer}>
-                <Text style={styles.heading}>{`${car.car_brand} ${car.car_model}`}</Text>
+                <Text style={styles.heading}>{`${car.car_name}`}</Text>
             </View>
             <View style={styles.container}>
                 <View style={styles.imageContainer}>
@@ -154,8 +154,6 @@ const CarScreen = (props) => {
 const styles = StyleSheet.create({
     container: {
         display: 'flex',
-        //alignItems: 'center',
-        //justifyContent: 'center',
         paddingBottom: 10
     },
     separator: {

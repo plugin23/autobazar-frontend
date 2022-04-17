@@ -1,5 +1,5 @@
-import 'react-native-gesture-handler'
 import React, { useState } from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage'
 import LoginScreen from './components/LoginScreen'
 import RegisterScreen from './components/RegisterScreen'
 import CarsScreen from './components/CarsScreen'

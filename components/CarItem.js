@@ -18,7 +18,7 @@ const CarItem = (props) => {
                 <View styles={styles.textContainer}>
                     <View style={styles.separator} />
                     <View style={styles.headingContainer}>
-                        <Text style={styles.heading}>{`${car.car_brand} ${car.car_model}`}</Text>
+                        <Text style={styles.heading}>{`${car.car_name}`}</Text>
                     </View>
                     <View style={styles.descriptionContainer}>
                         <Text style={styles.description}>{`${car.engine_cap} ${car.year} ${car.mileage}km ${car.price}€`}</Text>
