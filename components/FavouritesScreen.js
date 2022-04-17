@@ -2,7 +2,8 @@ import { createStackNavigator } from '@react-navigation/stack'
 import React, { useState, useEffect } from 'react';
 import CarItem from './CarItem'
 import CarScreen from './CarScreen';
-import { StyleSheet, Text, View, FlatList, SafeAreaView, ActivityIndicator } from 'react-native';
+import { StyleSheet, Text, View, FlatList, SafeAreaView, ActivityIndicator, ScrollView } from 'react-native';
+import { useIsFocused } from '@react-navigation/native';
 import { fetchAPI } from '../Api'
 
 const Stack = createStackNavigator()
@@ -11,14 +12,17 @@ const FavouritesScreen = (props) => {
     const [isFetching, setIsFetching] = useState(true)
     const [bookmarks, setBookmarks] = useState([])
     const [bookmarkCars, setBookmarkCars] = useState([])
+    const isFocused = useIsFocused();
 
-    useEffect( async () => { 
-        let cars = await fetchCars()
-        setBookmarkCars(cars)
-        setIsFetching(false)
+    useEffect(() => { 
+        getCarsObject()
     }, [])
 
-    const fetchCars = async () => {
+    useEffect(() => {
+        setIsFetching(false)
+    }, [bookmarkCars])
+
+    const fetchBookmarksAndCarsAsync = async () => {
         setIsFetching(true)
 
         const bookmarkObj = await fetchAPI(`api/autobazar/users/${props.userId}`, 'GET', {})
@@ -36,6 +40,11 @@ const FavouritesScreen = (props) => {
         }
 
         return carObjects
+    }
+
+    const getCarsObject = async () => {
+        let cars = await fetchBookmarksAndCarsAsync()
+        setBookmarkCars(cars)
     }
 
     const renderItem = (item) => {
@@ -65,7 +74,7 @@ const FavouritesScreen = (props) => {
                             ItemSeparatorComponent={itemSeparator}
                             showsVerticalScrollIndicator={false}
                             refreshing={isFetching}
-                            onRefresh={fetchCars}
+                            onRefresh={getCarsObject}
                         />
                 )}
                 </SafeAreaView>
