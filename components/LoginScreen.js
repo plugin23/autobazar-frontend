@@ -3,6 +3,7 @@ import { createStackNavigator } from '@react-navigation/stack'
 import { StatusBar } from 'expo-status-bar';
 import React from 'react';
 import { useState } from "react";
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 import { StyleSheet, Text, View, Button, TextInput, Alert, ActivityIndicator, TouchableOpacity} from 'react-native';
 import { fetchAPI } from '../Api'
 
@@ -41,7 +42,7 @@ const LoginScreen = (props) => {
     }
     
     return (
-        <View style={styles.container}>
+        <KeyboardAwareScrollView contentContainerStyle={styles.container} scrollEnabled={false}>
             <Text style={styles.logo}>Autobazár</Text>
             <View style={styles.buttonMargin}>
                 <TextInput style={styles.inputText} placeholder="Prihlasovacie meno" onChangeText={(text) => setEmail(text)} />
@@ -64,7 +65,7 @@ const LoginScreen = (props) => {
             <View style={styles.separator} />
             {isLoading && <ActivityIndicator size="large" color="#081c15" />}
             <StatusBar style="auto" />
-        </View>
+        </KeyboardAwareScrollView>
     );
     
 }
@@ -92,11 +93,12 @@ const styles = StyleSheet.create({
         color: '#fff'
     },
     inputText: {
-        borderColor: "#b7e4c7",
+        borderColor: "#000",
         borderWidth: 1,
-        borderRadius: 3,
+        borderRadius: 10,
         paddingHorizontal: 10,
-        paddingVertical: 8
+        paddingVertical: 8,
+        height: 50
     },
     logo: {
         fontSize: 50,

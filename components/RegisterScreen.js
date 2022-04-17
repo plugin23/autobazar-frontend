@@ -1,7 +1,7 @@
 import { StatusBar } from 'expo-status-bar';
 import React, { useState } from 'react';
 import { StyleSheet, Text, View, Button, TextInput, Alert, ActivityIndicator, TouchableOpacity } from 'react-native';
-import { ScrollView } from 'react-native-gesture-handler';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 import { fetchAPI } from '../Api'
 
 const RegisterScreen = (props) => {
@@ -42,7 +42,7 @@ const RegisterScreen = (props) => {
     }
 
     return (
-        <ScrollView contentContainerStyle={styles.container}>
+        <KeyboardAwareScrollView contentContainerStyle={styles.container} scrollEnabled={false}>
             <Text style={styles.logo}>Registrácia</Text>
             <View style={styles.buttonMargin}>
                 <TextInput style={styles.inputText} placeholder="Meno" onChangeText={(text) => setFirstName(text)}/>
@@ -71,7 +71,7 @@ const RegisterScreen = (props) => {
             <View style={styles.separator} />
             {isLoading && <ActivityIndicator size="large" color="#081c15" />}
             <StatusBar style="auto" />
-        </ScrollView>
+        </KeyboardAwareScrollView>
     );
 }
 
@@ -102,15 +102,17 @@ const styles = StyleSheet.create({
         color: '#fff'
     },
     inputText: {
-        borderColor: "#b7e4c7",
+        borderColor: "#000",
         borderWidth: 1,
-        borderRadius: 3,
+        borderRadius: 10,
         paddingHorizontal: 10,
-        paddingVertical: 8
+        paddingVertical: 8,
+        height: 50
     },
     logo: {
         fontSize: 50,
         textAlign: "center",
+        marginTop: 50,
         marginBottom:50
     }
 });

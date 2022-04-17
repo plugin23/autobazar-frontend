@@ -2,22 +2,20 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack'
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, Text, View, Button, TextInput, Alert, ActivityIndicator, TouchableOpacity} from 'react-native';
-import { ScrollView } from 'react-native-gesture-handler';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 import { fetchAPI } from '../Api'
 import { useNavigation } from '@react-navigation/native';
 
 const CarEdit = (props) => {
     
-    console.log(props)
-    const [userId, setUserId] = useState(props.route.params.userId)
     const [car, setCar] = useState(props.route.params.car)
-    const [engineCap, setEngineCap] = useState(props.route.params.engine_cap)
-    const [year, setYear] = useState(props.route.params.year)
-    const [mileage, setMileage] = useState(props.route.params.mileage)
-    const [doors, setDoors] = useState(props.route.params.doors)
-    const [body, setBody] = useState(props.route.params.body)
-    const [price, setPrice] = useState(props.route.params.price)
-    const [description, setDescription] = useState(props.route.params.description)
+    const [engineCap, setEngineCap] = useState(props.route.params.car.engine_cap)
+    const [year, setYear] = useState(props.route.params.car.year.toString())
+    const [mileage, setMileage] = useState(props.route.params.car.mileage.toString())
+    const [doors, setDoors] = useState(props.route.params.car.doors.toString())
+    const [body, setBody] = useState(props.route.params.car.body)
+    const [price, setPrice] = useState(props.route.params.car.price.toString())
+    const [description, setDescription] = useState(props.route.params.car.description)
     const navigation = useNavigation()
 
     const editCar = () => {
@@ -27,7 +25,6 @@ const CarEdit = (props) => {
         }
 
         const bodyObject = {
-            author: userId,
             year: year,
             mileage: mileage,
             price: price,
@@ -43,8 +40,9 @@ const CarEdit = (props) => {
     }
 
     return (
-        <ScrollView style={styles.buttonMargin}>
-                <TextInput style={styles.inputText} placeholder="Výkon" value={engineCap} onChangeText={(text) => setEngineCap(text)} />
+        <KeyboardAwareScrollView contentContainerStyle={styles.container} scrollEnabled={false}>
+                <View style={styles.separator} />
+                <TextInput style={styles.inputText} placeholder="Výkon motora" value={engineCap} onChangeText={(text) => setEngineCap(text)} />
                 <View style={styles.separator} />
                 <TextInput style={styles.inputText} placeholder="Rok výroby" value={year} onChangeText={(text) => setYear(text)} />
                 <View style={styles.separator} />
@@ -64,7 +62,7 @@ const CarEdit = (props) => {
                     <Text style={styles.buttonText}>Upraviť inzerát</Text>
                 </TouchableOpacity>
                 <View style={styles.separator} />
-        </ScrollView>
+        </KeyboardAwareScrollView>
     )
 }
 
@@ -91,11 +89,13 @@ const styles = StyleSheet.create({
         color: '#fff'
     },
     inputText: {
-        borderColor: "#b7e4c7",
+        borderColor: "#000",
         borderWidth: 1,
-        borderRadius: 3,
+        borderRadius: 10,
         paddingHorizontal: 10,
-        paddingVertical: 8
+        paddingVertical: 8,
+        width: '80%',
+        height: 50
     },
     logo: {
         fontSize: 50,

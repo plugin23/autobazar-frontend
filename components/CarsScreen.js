@@ -1,6 +1,4 @@
-import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack'
-import { StatusBar } from 'expo-status-bar';
 import CarItem from './CarItem'
 import CarEdit from './CarEdit'
 import React, { useEffect, useState } from 'react';
@@ -8,6 +6,7 @@ import { StyleSheet, View, FlatList, SafeAreaView, ActivityIndicator} from 'reac
 import { fetchAPI } from '../Api'
 import { ScrollView } from 'react-native-gesture-handler';
 import CarScreen from './CarScreen';
+import { useIsFocused } from '@react-navigation/native';
 
 const Stack = createStackNavigator()
 
@@ -15,10 +14,15 @@ const CarsScreen = (props) => {
 
     const [cars, setCars] = useState([])
     const [isFetching, setIsFetching] = useState(true)
+    const isFocused = useIsFocused();
     
     useEffect(() => { 
         fetchCars()
     }, [])
+
+    useEffect(() => {
+        isFocused && fetchCars()
+    }, [isFocused])
 
     const fetchCars = () => {
         setIsFetching(true)
@@ -46,7 +50,7 @@ const CarsScreen = (props) => {
 
     return (
         <Stack.Navigator>
-            <Stack.Screen name="allCars" options={{headerShown: false}} children={(props) =>
+            <Stack.Screen name="allCars" options={{title: '', headerShown: false}} children={(props) =>
                 <SafeAreaView style={styles.container}>
                     {isFetching ? (
                         <ActivityIndicator size="large" />
@@ -69,7 +73,7 @@ const CarsScreen = (props) => {
                 </ScrollView>
             } />
 
-            <Stack.Screen name="carEdit" option={{title: ''}} children={(props) =>
+            <Stack.Screen name="carEdit" options={{title: ''}} children={(props) =>
                 <CarEdit {...props}/>
             } />
         </Stack.Navigator>

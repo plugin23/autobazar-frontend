@@ -1,15 +1,14 @@
 import React, { useState, useEffect } from 'react'
-import { StyleSheet, Text, View, Image, TouchableOpacity, ActivityIndicator } from 'react-native';
+import { StyleSheet, Alert, Text, View, Image, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { fetchAPI } from '../Api';
 import { Ionicons } from '@expo/vector-icons';
 import { createStackNavigator } from '@react-navigation/stack'
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useIsFocused } from '@react-navigation/native';
 
 const Stack = createStackNavigator()
 
 const CarScreen = (props) => {
     const [car, setCar] = useState(props.route.params.car)
-    const [userId, setUserId] = useState(props.route.params.userId)
     const [isFetchingUser, setIsFetchingUser] = useState(true)
     const [isBookmarked, setIsBookmarked] = useState(false)
     const [firstName, setFirstName] = useState("")
@@ -17,11 +16,22 @@ const CarScreen = (props) => {
     const [phoneNumber, setPhoneNumber] = useState("")
     const [email, setEmail] = useState("")
     const [bookmarks, setBookmarks] = useState([])
+
     const navigation = useNavigation()
+    const isFocused = useIsFocused();
+
+    useEffect(() => {
+        //console.log(props.route.params)
+        getUser()
+    }, [])
+
+    useEffect(() => {
+        isFocused && getCar()
+    }, [isFocused])
 
     const getUser = () => {
 
-        fetchAPI(`api/autobazar/users/${props.route.params.userId}`, 'GET', {}).then(result => {
+        fetchAPI(`api/autobazar/users/${props.route.params.car.author}`, 'GET', {}).then(result => {
             setFirstName(result[0].first_name)
             setLastName(result[0].last_name)
             setPhoneNumber(result[0].phone_number)
@@ -32,8 +42,23 @@ const CarScreen = (props) => {
         })
     }
 
-    const carDelete = () => {
+    const getCar = () => {
+        fetchAPI(`api/autobazar/cars/${car._id}`, 'GET', {}).then(result => {
+            setCar(result)
+        })
+    }
 
+    const carDelete = () => {
+        Alert.alert("Zmazať inzerát", "Ste si istý že chcete vymazať váš inzerát?", [{
+            text: "Áno", onPress: () => {
+                fetchAPI(`api/autobazar/cars/${car._id}`, 'DELETE', {}).then(result => {
+                    Alert.alert("Inzerát bol úspešne vymazaný")
+                    navigation.goBack()
+                })
+            },
+        }, {
+            text: "Nie", onPress: () => { }
+        }])
     }
 
     const addToBookmarks = () => {
@@ -68,12 +93,6 @@ const CarScreen = (props) => {
         })
     }
 
-    useEffect(() => {
-        //console.log(props.route.params)
-        getUser()
-    }, [])
-
-
 
     let imageUrl = { uri: car.image_photos[0] }
     return (
@@ -89,7 +108,7 @@ const CarScreen = (props) => {
                             </View>
                         </TouchableOpacity> :
                         <></>}
-                    {(props.route.params.userId == car.author) ? (
+                    {(props.route.params.userId != car.author) ? (
                         !isBookmarked ?
                             <TouchableOpacity style={styles.iconButton} onPress={() => addToBookmarks()}><View><Ionicons name={'bookmark-outline'} size={30} /></View></TouchableOpacity> :
                             <TouchableOpacity style={styles.iconButton} onPress={() => deleteFromBookmarks()}><View><Ionicons name={'bookmark'} size={30} /></View></TouchableOpacity>
