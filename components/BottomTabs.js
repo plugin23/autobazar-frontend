@@ -2,6 +2,8 @@ import 'react-native-gesture-handler'
 import React from 'react';
 import CarsScreen from './CarsScreen'
 import FavouritesScreen from './FavouritesScreen'
+import AddCarScreen from './AddCarScreen'
+import ProfileScreen from './ProfileScreen'
 import { Ionicons } from '@expo/vector-icons';
 import { createStackNavigator} from '@react-navigation/stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'

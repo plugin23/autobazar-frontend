@@ -50,14 +50,13 @@ const App = () => {
         ) : (
                 <NavigationContainer>
                     <Stack.Navigator initialRouteName='Tabs' screenOptions={{ headerShown: false }}>
-                        <Stack.Screen name="Home" children={() => <CarsScreen userId={userId} />} />
-                        <Stack.Screen name="Tabs" children={() => <BottomTabs userId={userId} />} />
+                        <Stack.Screen name="Home" children={() => <CarsScreen userId={userId}/>}></Stack.Screen>
+                        <Stack.Screen name="Tabs" children={() => <BottomTabs userId={userId} logOut={logOut}/>}/>
                     </Stack.Navigator>
                 </NavigationContainer>
             )
     );
 }
-
 
 export default App
 
