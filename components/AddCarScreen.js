@@ -42,7 +42,6 @@ const AddCarScreen = (props) => {
     useEffect(() => {
         if (url != "" && url != null) {
             let carNameString = carBrand + " " + carModel;
-            console.log(url)
             const bodyObject = {
                 author: props.userId,
                 year: year,
@@ -74,11 +73,8 @@ const AddCarScreen = (props) => {
             return
         }
 
-        //almost done, need to wait for upload to finish before POSTing
         let url = await uploadImageAsync(selectedImage)
-        console.log(url)
         setUrl(url)
-        
     }
 
     //https://docs.expo.dev/tutorial/image-picker/
