@@ -4,7 +4,7 @@ import CarItem from './CarItem'
 import CarScreen from './CarScreen';
 import { StyleSheet, Text, View, FlatList, SafeAreaView, ActivityIndicator, ScrollView } from 'react-native';
 import { useIsFocused } from '@react-navigation/native';
-import { fetchAPI } from '../Api'
+import fetchAPI from '../Api'
 import { TextInput } from 'react-native-gesture-handler';
 
 const SearchScreen = (props) => {
@@ -29,7 +29,7 @@ const SearchScreen = (props) => {
     return (
         <Stack.Navigator>
             <Stack.Screen name="search" options={{title: '', headerShown: false}} children={(props) =>
-                <SafeAreaView style={styles.container}>
+                <View style={styles.container}>
                     <TextInput></TextInput>
                     {isFetching ? (
                         <ActivityIndicator size="large" />
@@ -46,7 +46,7 @@ const SearchScreen = (props) => {
                             />
                         ) : <></>
                     }
-                </SafeAreaView>
+                </View>
             } />
             <Stack.Screen name="carScreen" options={{title: ''}} children={(props) =>
                 <ScrollView>

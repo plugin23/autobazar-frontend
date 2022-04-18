@@ -2,10 +2,10 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack'
 import { StatusBar } from 'expo-status-bar';
 import React, { useState, useEffect } from 'react';
-import { fetchAPI } from '../Api'
+import fetchAPI from '../Api'
 import { StyleSheet, View, FlatList, SafeAreaView, ActivityIndicator} from 'react-native';
 import UserItem from './UserItem';
-import FavouriteItem from './FavouriteItem'
+
 
 
 const Stack = createStackNavigator()

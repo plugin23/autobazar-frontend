@@ -5,7 +5,7 @@ import React from 'react';
 import { useState } from "react";
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 import { StyleSheet, Text, View, Button, TextInput, Alert, ActivityIndicator, TouchableOpacity} from 'react-native';
-import { fetchAPI } from '../Api'
+import fetchAPI from '../Api'
 
 const Stack = createStackNavigator()
 

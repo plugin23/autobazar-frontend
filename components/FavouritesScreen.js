@@ -4,7 +4,7 @@ import CarItem from './CarItem'
 import CarScreen from './CarScreen';
 import { StyleSheet, Text, View, FlatList, SafeAreaView, ActivityIndicator, ScrollView } from 'react-native';
 import { useIsFocused } from '@react-navigation/native';
-import { fetchAPI } from '../Api'
+import fetchAPI from '../Api'
 
 const Stack = createStackNavigator()
 
@@ -15,37 +15,59 @@ const FavouritesScreen = (props) => {
     const isFocused = useIsFocused();
 
     useEffect(() => { 
-        getCarsObject()
-    }, [])
+        const getCarsObject = async () => {
+            setIsFetching(true)
+    
+            const userObj = await fetchAPI(`api/autobazar/users/${props.userId}`, 'GET', {})
+            setBookmarks(userObj[0].favourites)
 
-    useEffect(() => {
-        setIsFetching(false)
-    }, [bookmarkCars])
-
-    const fetchBookmarksAndCarsAsync = async () => {
-        setIsFetching(true)
-
-        const bookmarkObj = await fetchAPI(`api/autobazar/users/${props.userId}`, 'GET', {})
-        setBookmarks(bookmarkObj[0].favourites)
-
-        let carObjects = []
-        for (var i = 0; i < bookmarks.length; i++) {
-            let carId = bookmarks[i]
-
-            let carObj = await fetchAPI(`api/autobazar/cars/${carId}`, 'GET', {})
-
-            if (!carObj.errors) {
-                carObjects.push(carObj)
+            
+            let carObjects = []
+            for (var i = 0; i < userObj[0].favourites.length; i++) {
+                let carId = userObj[0].favourites[i]
+                let carObj = await fetchAPI(`api/autobazar/cars/${carId}`, 'GET', {})
+                
+                if (!carObj.errors) {
+                    carObjects.push(carObj)
+                }
             }
+            
+            setBookmarkCars(carObjects)
         }
 
-        return carObjects
-    }
+        getCarsObject().then(() => {
+            setIsFetching(false)
+        })
+        
+    }, [])
 
-    const getCarsObject = async () => {
-        let cars = await fetchBookmarksAndCarsAsync()
-        setBookmarkCars(cars)
-    }
+    useEffect(() => { 
+        const getCarsObject = async () => {
+            setIsFetching(true)
+    
+            const userObj = await fetchAPI(`api/autobazar/users/${props.userId}`, 'GET', {})
+            setBookmarks(userObj[0].favourites)
+
+            
+            let carObjects = []
+            for (var i = 0; i < userObj[0].favourites.length; i++) {
+                let carId = userObj[0].favourites[i]
+                console.log(userObj[0].favourites[i])
+                let carObj = await fetchAPI(`api/autobazar/cars/${carId}`, 'GET', {})
+                
+                if (!carObj.errors) {
+                    carObjects.push(carObj)
+                }
+            }
+            
+            setBookmarkCars(carObjects)
+        }
+
+        isFetching && getCarsObject().then(() => {
+            setIsFetching(false)
+        })
+        
+    }, [isFetching])
 
     const renderItem = (item) => {
         //console.log("id: " + props.userId)
@@ -59,11 +81,16 @@ const FavouritesScreen = (props) => {
             <View style={styles.separator} />
         )
     }
+
+    const onRefresh = () => {
+        setIsFetching(true)
+    }
     
     return (
         <Stack.Navigator>
             <Stack.Screen name="bookmarkCars" options={{title: '', headerShown: false}} children={(props) =>
-                <SafeAreaView style={styles.container}>
+                <View style={styles.container}>
+                    <Text style={styles.logo}>Uložené inzeráty</Text>
                     {isFetching ? (
                         <ActivityIndicator size="large" />
                     ) : (
@@ -74,10 +101,11 @@ const FavouritesScreen = (props) => {
                             ItemSeparatorComponent={itemSeparator}
                             showsVerticalScrollIndicator={false}
                             refreshing={isFetching}
-                            onRefresh={getCarsObject}
+                            onRefresh={onRefresh}
                         />
-                )}
-                </SafeAreaView>
+                    )}
+                </View>
+                
             } />
             <Stack.Screen name="carScreen" options={{title: ''}} children={(props) =>
                 <ScrollView>
@@ -91,6 +119,7 @@ const FavouritesScreen = (props) => {
 const styles = StyleSheet.create({
     container: {
         alignItems: 'center',
+        flex: 1
     },
     separator: {
         marginVertical: 8
@@ -101,8 +130,8 @@ const styles = StyleSheet.create({
     logo: {
         fontSize: 50,
         textAlign: "center",
-        marginTop: 70,
-        marginBottom: 50
+        marginTop: 30,
+        marginBottom: 20
     }
 });
 
