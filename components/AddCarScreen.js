@@ -59,6 +59,7 @@ const AddCarScreen = (props) => {
 
                 if (result._id) {
                     setIsAdded(true)
+                    edit_user(result)
                 }
                 else {
                     Alert.alert("Údaje, ktoré ste zadali nie sú správne", [{ text: "OK", onPress: () => { } }])
@@ -107,6 +108,27 @@ const AddCarScreen = (props) => {
         const downloadURL = await uploadTaskSnapshot.ref.getDownloadURL();
 
         return downloadURL
+    }
+
+
+    const edit_user = (result) => {
+        console.log(result._id)
+
+        const bodyObjectUser = {
+            own_advertisement: result._id 
+        }
+        
+        console.log(bodyObjectUser)
+
+        fetchAPI(`api/autobazar/users/${result.author}/own_advertisement`, 'PUT', bodyObjectUser).then(result => {
+
+            if (result) {
+                alert('pridane aj userovi')                
+            }
+            else { //ak uzivatel zada zle heslo alebo meno
+                Alert.alert("Nepodarilo sa vložiť užívateľovi tento inzerát", "Údaje, ktoré ste zadali nie sú správne", [{ text: "OK", onPress: () => { } }])
+            }
+        })
     }
 
     return (

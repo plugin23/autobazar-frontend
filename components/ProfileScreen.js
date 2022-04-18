@@ -7,14 +7,15 @@ import { StyleSheet, View, FlatList, SafeAreaView, ActivityIndicator} from 'reac
 import UserItem from './UserItem';
 
 
-
 const Stack = createStackNavigator()
 
 const ProfileScreen = (props) => {
 
     const [isFetching, setIsFetching] = useState(true)
     const [cars, setCars] = useState([])
-
+    const [cars_array, setCars_array] = useState([])
+    const [favourites, setFavourites] = useState([])
+    const [own, setOwn] = useState([])
 
     useEffect(() => { 
         fetchCars()
@@ -28,16 +29,35 @@ const ProfileScreen = (props) => {
             if (result[0]._id) {
                 setCars(result)
                 setIsFetching(false)
+                fetchUserCars(result)
             }
             else { 
                 alert("Nepodarilo sa naloadovať dáta!", [{ text: "OK", onPress: () => { } }])
             }
-        })
+        })         
+
+
     }
+
+
+    //Need to resolve loop fetching !
+    const fetchUserCars = (result) => {
+        console.log(result[0].own_advertisement)
+        console.log(result[0].favourites)
+
+        setOwn(result[0].own_advertisement)
+        setFavourites(result[0].favourites)
+
+        fetchAPI('api/autobazar/cars/'+ result[0].own_advertisement, 'GET').then(result => { 
+            console.log(result)
+        })
+    }   
+    
 
     const renderItem = (item) => {
         return (
             <UserItem car={item.item} logOut={props.logOut} />
+            //<CarItem car={item.item} userId={props.userId}/>
         )
     }
 
