@@ -1,32 +1,32 @@
-import React, { useState, useEffect } from 'react'
-import { StyleSheet, Text, View, Image, TouchableOpacity } from 'react-native';
-import CarScreen from './CarScreen'
-import { useNavigation } from '@react-navigation/native';
+import React, { useState } from 'react'
+import { StyleSheet, Text, View,  TouchableOpacity } from 'react-native';
 
-const CarItem = (props) => {
+const UserItem = (props) => {
     const [car, setCar] = useState(props.car)
-    const [userId, setUserId] = useState(props.userId)
-    let imageUrl = {uri : car.image_photos[0]}
-    const navigation = useNavigation()
     
     return (
-        <TouchableOpacity onPress={() => navigation.navigate('carScreen', {car: car, userId: userId})}>
+            <TouchableOpacity>
             <View styles={styles.container}>
-                <View>
-                    <Image style={styles.image} source={imageUrl} />
-                </View>
                 <View styles={styles.textContainer}>
                     <View style={styles.separator} />
                     <View style={styles.headingContainer}>
-                        <Text style={styles.heading}>{`${car.car_name}`}</Text>
-                    </View>
-                    <View style={styles.descriptionContainer}>
-                        <Text style={styles.description}>{`${car.engine_cap} ${car.year} ${car.mileage}km ${car.price}€`}</Text>
+                    <Text style={styles.heading}> Meno: {`${car.first_name}`}</Text>
+                    <Text style={styles.heading}> Priezvisko: {`${car.last_name}`}</Text>
+                    <Text style={styles.heading}> Tel. číslo: {`${car.phone_number}`}</Text>
+                    <Text style={styles.heading}> Email: {`${car.email}`}</Text>
                     </View>
                 </View>
             </View>
-        </TouchableOpacity>
+            <View style={styles.separator} />
+
+            <TouchableOpacity
+                        onPress=  {()=>props.logOut()}
+                        style={styles.buttonStyle}>
+                        <Text style={styles.buttonText}>Odhlásiť sa</Text>
+                </TouchableOpacity>                
+        </TouchableOpacity>                     
     );
+    
 };
 
 const styles = StyleSheet.create({
@@ -61,4 +61,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default CarItem
+export default UserItem

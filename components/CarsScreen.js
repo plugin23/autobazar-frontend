@@ -1,10 +1,12 @@
-import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack'
-import { StatusBar } from 'expo-status-bar';
 import CarItem from './CarItem'
+import CarEdit from './CarEdit'
 import React, { useEffect, useState } from 'react';
 import { StyleSheet, View, FlatList, SafeAreaView, ActivityIndicator} from 'react-native';
 import { fetchAPI } from '../Api'
+import { ScrollView } from 'react-native-gesture-handler';
+import CarScreen from './CarScreen';
+import { useIsFocused } from '@react-navigation/native';
 
 const Stack = createStackNavigator()
 
@@ -12,16 +14,19 @@ const CarsScreen = (props) => {
 
     const [cars, setCars] = useState([])
     const [isFetching, setIsFetching] = useState(true)
-    const [userId, setUserId] = useState(props.userId)
-
+    const isFocused = useIsFocused();
+    
     useEffect(() => { 
         fetchCars()
     }, [])
 
+    useEffect(() => {
+        isFocused && fetchCars()
+    }, [isFocused])
+
     const fetchCars = () => {
         setIsFetching(true)
 
-        
         fetchAPI('api/autobazar/cars', 'GET', {}).then(result => {
             setCars(result)
             setIsFetching(false)
@@ -30,9 +35,9 @@ const CarsScreen = (props) => {
     }
 
     const renderItem = (item) => {
-        //console.log(item.item)
+        //console.log("id: " + props.userId)
         return (
-            <CarItem car={item.item} />
+            <CarItem car={item.item} userId={props.userId}/>
         )
     }
 
@@ -44,21 +49,35 @@ const CarsScreen = (props) => {
 
 
     return (
-        <SafeAreaView style={styles.container}>
-            {isFetching ? (
-                <ActivityIndicator size="large" />
-            ) : (
-                <FlatList
-                    data={cars}
-                    renderItem={item => renderItem(item)}
-                    keyExtractor={item => item._id.toString()}
-                    ItemSeparatorComponent={itemSeparator}
-                    showsVerticalScrollIndicator={false}
-                    refreshing={isFetching}
-                    onRefresh={fetchCars}
-                />
-            )}
-        </SafeAreaView>
+        <Stack.Navigator>
+            <Stack.Screen name="allCars" options={{title: '', headerShown: false}} children={(props) =>
+                <SafeAreaView style={styles.container}>
+                    {isFetching ? (
+                        <ActivityIndicator size="large" />
+                    ) : (
+                        <FlatList
+                            data={cars}
+                            renderItem={item => renderItem(item)}
+                            keyExtractor={item => item._id.toString()}
+                            ItemSeparatorComponent={itemSeparator}
+                            showsVerticalScrollIndicator={false}
+                            refreshing={isFetching}
+                            onRefresh={fetchCars}
+                        />
+                )}
+                </SafeAreaView>
+            } />
+            <Stack.Screen name="carScreen" options={{title: ''}} children={(props) =>
+                <ScrollView>
+                    <CarScreen {...props} />
+                </ScrollView>
+            } />
+
+            <Stack.Screen name="carEdit" options={{title: ''}} children={(props) =>
+                <CarEdit {...props}/>
+            } />
+        </Stack.Navigator>
+        
     );
 }
 
