@@ -6,27 +6,6 @@ import { StyleSheet, Text, View, Button, TextInput, Alert, ActivityIndicator, To
 import { ScrollView } from 'react-native-gesture-handler';
 import { fetchAPI } from '../Api'
 
-import { initializeApp } from "firebase/app";
-import {  uploadBytes, getDownloadURL} from "firebase/storage";
-
-
-
-
-
-const firebaseConfig = {
-    apiKey: "AIzaSyC3bvlOlY1gGFWUiSDMg9YA94E8hwGSwuo",
-    authDomain: "mtaa-autobazar-storage.firebaseapp.com",
-    projectId: "mtaa-autobazar-storage",
-    storageBucket: "mtaa-autobazar-storage.appspot.com",
-    messagingSenderId: "276629828442",
-    appId: "1:276629828442:web:876afc5961294466e47963",
-    measurementId: "G-XL77BC1PLX"
-  };
-  
-  // Initialize Firebase
-  initializeApp(firebaseConfig);
-
-
 const Stack = createStackNavigator()
 
 const AddCarScreen = (props) => {
@@ -38,10 +17,10 @@ const AddCarScreen = (props) => {
     const [doors, seDdoors] = useState(0)
     const [description, setdescription] = useState("")
     const [body, setBody] = useState("") 
+    const [car_name, setCar_name] = useState("") 
     const [car_model, setcar_model] = useState("") 
     const [isAdded, setIsAdded] = useState(false)
-    const [image, setImage] = useState(false)
-    const [url, setUrl] = useState("")
+    const [car_id, setCarId] = useState("")
 
 
     useEffect(() => { 
@@ -53,7 +32,7 @@ const AddCarScreen = (props) => {
 
 
     const addCar = () => {
-        if (carBrand == "" || engineCap == "" || year=="" || mileage=="" || price=="" || doors=="" || description=="" || body=="" || car_model=="") {
+        if (carBrand == "" || engineCap == "" || year=="" || mileage=="" || price=="" || doors=="" || description=="" || body=="" || car_model=="" || car_name=="") {
             Alert.alert("Prázdne pole", "Prosím vyplňte obe polia", [{ text: "OK", onPress: () => { } }])
             return
         }
@@ -68,6 +47,7 @@ const AddCarScreen = (props) => {
             engine_cap: engineCap,
             car_brand: carBrand,
             body: body,
+            car_name: car_name,
             car_model : car_model
             
         }
@@ -76,30 +56,38 @@ const AddCarScreen = (props) => {
             
             if (result._id) {
                 setIsAdded(true)
+                setCarId(result._id)
+                edit_user(result)
+                
             }
             else { //ak uzivatel zada zle heslo alebo meno
                 Alert.alert("Nesprávne údaje", "Údaje, ktoré ste zadali nie sú správne", [{ text: "OK", onPress: () => { } }])
             }
+        })       
+    
+    }
+
+   
+
+    const edit_user = (result) => {
+        console.log(result._id)
+
+        const bodyObjectUser = {
+            own_advertisement: result._id 
+        }
+        
+        console.log(bodyObjectUser)
+
+        fetchAPI(`api/autobazar/users/${result.author}/own_advertisement`, 'PUT', bodyObjectUser).then(result => {
+
+            if (result) {
+                alert('pridane aj userovi')                
+            }
+            else { //ak uzivatel zada zle heslo alebo meno
+                Alert.alert("Nepodarilo sa vložiť užívateľovi tento inzerát", "Údaje, ktoré ste zadali nie sú správne", [{ text: "OK", onPress: () => { } }])
+            }
         })
     }
-    
-    const handleChange = e  => {
-        if(e.target.files[0]){
-            console.log(e.target.files[0])
-            setImage(e.target.files[0])
-        }
-    };
-
-    const handleUpdate = () => {
-        const file = image
-        uploadBytes(storageRef, file).then((snapshot) => {
-            getDownloadURL(snapshot.ref).then(async (downloadURL) => {            
-               console.log(downloadURL.toString())
-               setUrl(url)
-            });
-        });
-    }
-    
 
     return (
         isAdded ? (
@@ -115,6 +103,8 @@ const AddCarScreen = (props) => {
                 <View style={styles.separator} />
                 <TextInput style={styles.inputText} placeholder="Výkon" onChangeText={(text) => setEngineCap(text)} />
                 <View style={styles.separator} />
+                <TextInput style={styles.inputText} placeholder="Car name" onChangeText={(text) => setCar_name(text)} />
+                <View style={styles.separator} />
                 <TextInput style={styles.inputText} placeholder="Rok výroby" onChangeText={(text) => setYear(text)} />
                 <View style={styles.separator} />
                 <TextInput style={styles.inputText} placeholder="Počet  najazdenýchkilometrov" onChangeText={(text) => setMileage(text)} />
@@ -128,10 +118,6 @@ const AddCarScreen = (props) => {
                 <TextInput style={styles.inputText} placeholder="Popis" onChangeText={(text) => setdescription(text)} />
                 <View style={styles.separator} />
                 <View style={{ paddingVertical: 10 }} />
-                <>
-                <input type="file" onChange={handleChange} />
-                <button onClick={handleUpdate}>Upload</button>
-                </>
                 <TouchableOpacity
                     onPress={addCar}
                     style={styles.buttonStyle}>
