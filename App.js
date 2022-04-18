@@ -1,5 +1,5 @@
-import 'react-native-gesture-handler'
 import React, { useState } from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage'
 import LoginScreen from './components/LoginScreen'
 import RegisterScreen from './components/RegisterScreen'
 import CarsScreen from './components/CarsScreen'
@@ -9,6 +9,7 @@ import { NavigationContainer } from '@react-navigation/native'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import { createStackNavigator} from '@react-navigation/stack';
 
+
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
 
@@ -16,6 +17,7 @@ const App = () => {
     const [isLoggedIn, setIsLoggedIn] = useState(false)
     const [isRegistering, setIsRegistering] = useState(false)
     const [userId, setUserId] = useState("")
+
 
     const loggedIn = (id) => {
         setIsLoggedIn(true)
@@ -37,6 +39,7 @@ const App = () => {
         }
     }
 
+
     return (
         !isLoggedIn ? (
             !isRegistering ? (
@@ -52,7 +55,7 @@ const App = () => {
                     </Stack.Navigator>
                 </NavigationContainer>
             )
-    )
+    );
 }
 
 export default App

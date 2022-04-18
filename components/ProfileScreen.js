@@ -30,7 +30,7 @@ const ProfileScreen = (props) => {
                 setIsFetching(false)
             }
             else { 
-            alert("Nepodarilo sa naloadovať dáta!", [{ text: "OK", onPress: () => { } }])
+                alert("Nepodarilo sa naloadovať dáta!", [{ text: "OK", onPress: () => { } }])
             }
         })
     }
@@ -38,7 +38,6 @@ const ProfileScreen = (props) => {
     const renderItem = (item) => {
         return (
             <UserItem car={item.item} logOut={props.logOut} />
-
         )
     }
 
