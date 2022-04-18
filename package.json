@@ -2,12 +2,8 @@
   "main": "index.js",
   "dependencies": {
     "@expo/vector-icons": "^12.0.0",
-<<<<<<< HEAD
-    "@react-native-firebase/storage": "^14.7.0",
-=======
     "@react-native-async-storage/async-storage": "~1.15.0",
     "@react-native-firebase/app": "^14.7.0",
->>>>>>> 826eeddb59b9f88daaa4dcb351577ec3bcf7bb51
     "@react-navigation/bottom-tabs": "^6.3.1",
     "@react-navigation/native": "^6.0.10",
     "@react-navigation/native-stack": "^6.6.1",
