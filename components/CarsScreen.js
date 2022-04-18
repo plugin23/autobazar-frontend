@@ -35,7 +35,7 @@ const CarsScreen = (props) => {
     }
 
     const renderItem = (item) => {
-        //console.log("id: " + props.userId)
+        console.log("id: " + props.userId)
         return (
             <CarItem car={item.item} userId={props.userId}/>
         )
