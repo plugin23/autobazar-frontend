@@ -1,11 +1,9 @@
 import { createStackNavigator } from '@react-navigation/stack'
 import React, { useState, useEffect } from 'react';
 import CarItem from './CarItem'
-import CarEdit from './CarEdit'
 import CarScreen from './CarScreen';
 import { StyleSheet, Text, View, FlatList, TouchableOpacity, ActivityIndicator, ScrollView } from 'react-native';
 import fetchAPI from '../Api'
-
 
 const Stack = createStackNavigator()
 
@@ -114,10 +112,6 @@ const ProfileScreen = (props) => {
                 <ScrollView>
                     <CarScreen {...props} />
                 </ScrollView>
-            } />
-
-            <Stack.Screen name="carEdit" options={{ title: '' }} children={(props) =>
-                <CarEdit {...props} />
             } />
         </Stack.Navigator>
     );
