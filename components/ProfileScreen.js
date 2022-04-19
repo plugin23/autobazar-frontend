@@ -2,7 +2,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack'
 import { StatusBar } from 'expo-status-bar';
 import React, { useState, useEffect } from 'react';
-import { fetchAPI } from '../Api'
+export fetchAPI, { fetchAPI } from '../Api'
 import { StyleSheet, View, FlatList, SafeAreaView, ActivityIndicator} from 'react-native';
 import UserItem from './UserItem';
 import FavouriteItem from './FavouriteItem'
@@ -14,9 +14,7 @@ const ProfileScreen = (props) => {
 
     const [isFetching, setIsFetching] = useState(true)
     const [cars, setCars] = useState([])
-    const [cars_array, setCars_array] = useState([])
-    const [favourites, setFavourites] = useState([])
-    const [own, setOwn] = useState([])
+
 
     useEffect(() => { 
         fetchCars()
@@ -26,37 +24,21 @@ const ProfileScreen = (props) => {
         setIsFetching(true)
         
         fetchAPI('api/autobazar/users/'+ props.userId, 'GET').then(result => {    
-            //console.log(result)
 
             if (result[0]._id) {
-                setCars(result)                
+                setCars(result)
                 setIsFetching(false)
-                setOwn(result[0].own_advertisement)        
-                fetchUserCars()  
             }
             else { 
                 alert("Nepodarilo sa naloadovať dáta!", [{ text: "OK", onPress: () => { } }])
             }
-        })         
-    }
-
-    //Need to resolve loop fetching !
-    const fetchUserCars = (result) => {
-
-        setOwn(result[0].own_advertisement)
-        setFavourites(result[0].favourites)
-
-        fetchAPI('api/autobazar/cars/'+ result[0].own_advertisement, 'GET').then(result => { 
-            console.log(result)
         })
-    }   
-    
+    }
 
     const renderItem = (item) => {
         console.log(item.item)
         return (
-            <UserItem user={item.item} logOut={props.logOut} />
-            //<CarItem car={own} userId={props.userId}/>
+            <UserItem car={item.item} logOut={props.logOut} />
         )
     }
 
