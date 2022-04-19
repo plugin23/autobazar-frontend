@@ -19,7 +19,6 @@ const CarScreen = (props) => {
     const isFocused = useIsFocused();
 
     useEffect(() => {
-        //console.log(props.route.params)
         getUser()
     }, [])
 
@@ -38,7 +37,6 @@ const CarScreen = (props) => {
             })
 
         fetch(`https://fiit-autobazar-backend.herokuapp.com/api/autobazar/users/${props.route.params.userId}`).then(response => response.json()).then(response => {
-            //console.log(response)
             setBookmarks(response[0].favourites)
             setIsBookmarked(response[0].favourites.includes(car._id))
             })
@@ -47,7 +45,6 @@ const CarScreen = (props) => {
     const getCar = () => {       
 
         fetch(`https://fiit-autobazar-backend.herokuapp.com/api/autobazar/cars/${car._id}`).then(response => response.json()).then(response => {
-            //console.log(response)
             setCar(response)
             })
         

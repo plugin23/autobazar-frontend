@@ -121,13 +121,11 @@ const AddCarScreen = (props) => {
 
 
     const edit_user = (result) => {
-        console.log(result._id)
 
         const bodyObjectUser = {
             own_advertisement: result._id 
         }
-        
-        console.log(bodyObjectUser)       
+           
 
         const fetchObject = {
             method: 'PUT',
@@ -138,7 +136,6 @@ const AddCarScreen = (props) => {
         }
 
         fetch(`https://fiit-autobazar-backend.herokuapp.com/api/autobazar/users/${result.author}/own_advertisement` , fetchObject).then(response => response.json()).then(response => {
-            console.log(response)
             if (response.id) {
                 //alert(result)
                 props.loggedIn(response.id)
