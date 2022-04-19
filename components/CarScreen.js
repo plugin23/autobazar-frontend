@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { StyleSheet, Alert, Text, View, Image, TouchableOpacity, ActivityIndicator } from 'react-native';
-import { fetchAPI } from '../Api';
+import fetchAPI from '../Api'
 import { Ionicons } from '@expo/vector-icons';
 import { createStackNavigator } from '@react-navigation/stack'
 import { useNavigation, useIsFocused } from '@react-navigation/native';
@@ -16,7 +16,6 @@ const CarScreen = (props) => {
     const [phoneNumber, setPhoneNumber] = useState("")
     const [email, setEmail] = useState("")
     const [bookmarks, setBookmarks] = useState([])
-
     const navigation = useNavigation()
     const isFocused = useIsFocused();
 
@@ -36,9 +35,12 @@ const CarScreen = (props) => {
             setLastName(result[0].last_name)
             setPhoneNumber(result[0].phone_number)
             setEmail(result[0].email)
+            setIsFetchingUser(false)
+        })
+
+        fetchAPI(`api/autobazar/users/${props.route.params.userId}`, 'GET', {}).then(result => {
             setBookmarks(result[0].favourites)
             setIsBookmarked(result[0].favourites.includes(car._id))
-            setIsFetchingUser(false)
         })
     }
 

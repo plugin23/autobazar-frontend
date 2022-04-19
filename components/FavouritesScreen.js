@@ -4,7 +4,7 @@ import CarItem from './CarItem'
 import CarScreen from './CarScreen';
 import { StyleSheet, Text, View, FlatList, SafeAreaView, ActivityIndicator, ScrollView } from 'react-native';
 import { useIsFocused } from '@react-navigation/native';
-import { fetchAPI } from '../Api'
+import fetchAPI from '../Api'
 
 const Stack = createStackNavigator()
 
@@ -15,37 +15,31 @@ const FavouritesScreen = (props) => {
     const isFocused = useIsFocused();
 
     useEffect(() => { 
-        getCarsObject()
-    }, [])
+        const getCarsObject = async () => {
+            setIsFetching(true)
+    
+            const userBookmarks = await fetchAPI(`api/autobazar/users/${props.userId}` + '/favourites', 'GET', {})
+            setBookmarks(userBookmarks)
 
-    useEffect(() => {
-        setIsFetching(false)
-    }, [bookmarkCars])
-
-    const fetchBookmarksAndCarsAsync = async () => {
-        setIsFetching(true)
-
-        const bookmarkObj = await fetchAPI(`api/autobazar/users/${props.userId}`, 'GET', {})
-        setBookmarks(bookmarkObj[0].favourites)
-
-        let carObjects = []
-        for (var i = 0; i < bookmarks.length; i++) {
-            let carId = bookmarks[i]
-
-            let carObj = await fetchAPI(`api/autobazar/cars/${carId}`, 'GET', {})
-
-            if (!carObj.errors) {
-                carObjects.push(carObj)
+            
+            let carObjects = []
+            for (var i = 0; i < userBookmarks.length; i++) {
+                let carId = userBookmarks[i]
+                let carObj = await fetchAPI(`api/autobazar/cars/${carId}`, 'GET', {})
+                
+                if (!carObj.errors) {
+                    carObjects.push(carObj)
+                }
             }
+            
+            setBookmarkCars(carObjects)
         }
 
-        return carObjects
-    }
-
-    const getCarsObject = async () => {
-        let cars = await fetchBookmarksAndCarsAsync()
-        setBookmarkCars(cars)
-    }
+        isFetching && getCarsObject().then(() => {
+            setIsFetching(false)
+        })
+        
+    }, [isFetching])
 
     const renderItem = (item) => {
         //console.log("id: " + props.userId)
@@ -59,11 +53,23 @@ const FavouritesScreen = (props) => {
             <View style={styles.separator} />
         )
     }
+
+    const renderHeader = () => {
+        return (
+            <View style={styles.container}>
+                <Text style={styles.logo}>Uložené inzeráty</Text>
+            </View>
+        )  
+    }
+
+    const onRefresh = () => {
+        setIsFetching(true)
+    }
     
     return (
         <Stack.Navigator>
             <Stack.Screen name="bookmarkCars" options={{title: '', headerShown: false}} children={(props) =>
-                <SafeAreaView style={styles.container}>
+                <View style={styles.container}>
                     {isFetching ? (
                         <ActivityIndicator size="large" />
                     ) : (
@@ -71,13 +77,14 @@ const FavouritesScreen = (props) => {
                             data={bookmarkCars}
                             renderItem={item => renderItem(item)}
                             keyExtractor={item => item._id.toString()}
+                            ListHeaderComponent={renderHeader}
                             ItemSeparatorComponent={itemSeparator}
                             showsVerticalScrollIndicator={false}
                             refreshing={isFetching}
-                            onRefresh={getCarsObject}
+                            onRefresh={onRefresh}
                         />
-                )}
-                </SafeAreaView>
+                    )}
+                </View>
             } />
             <Stack.Screen name="carScreen" options={{title: ''}} children={(props) =>
                 <ScrollView>
@@ -91,6 +98,7 @@ const FavouritesScreen = (props) => {
 const styles = StyleSheet.create({
     container: {
         alignItems: 'center',
+        flex: 1
     },
     separator: {
         marginVertical: 8
@@ -99,10 +107,10 @@ const styles = StyleSheet.create({
         paddingVertical: 50
     },    
     logo: {
-        fontSize: 50,
+        fontSize: 45,
         textAlign: "center",
-        marginTop: 70,
-        marginBottom: 50
+        marginTop: 30,
+        marginBottom: 20
     }
 });
 

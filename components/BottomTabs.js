@@ -4,6 +4,7 @@ import CarsScreen from './CarsScreen'
 import FavouritesScreen from './FavouritesScreen'
 import AddCarScreen from './AddCarScreen'
 import ProfileScreen from './ProfileScreen'
+import SearchScreen from './SearchScreen'
 import { Ionicons } from '@expo/vector-icons';
 import { createStackNavigator} from '@react-navigation/stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
@@ -53,7 +54,7 @@ const BottomTabs = (props) => {
                             return <Ionicons name={iconName} size={20} color={color} />;
                         }
                     }}
-                    children={() => <FavouritesScreen userId={props.userId}/>}></Tab.Screen>
+                    children={() => <SearchScreen userId={props.userId}/>}></Tab.Screen>
                 <Tab.Screen name="Profile" 
                     options={{
                         tabBarLabel: 'Profile',
