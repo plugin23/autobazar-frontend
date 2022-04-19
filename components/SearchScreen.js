@@ -4,7 +4,7 @@ import CarItem from './CarItem'
 import CarScreen from './CarScreen';
 import { StyleSheet, Text, View, FlatList, TouchableOpacity, ActivityIndicator, ScrollView } from 'react-native';
 import { useIsFocused } from '@react-navigation/native';
-import fetchAPI from '../Api'
+import {fetchAPI}  from '../Api'
 import { TextInput } from 'react-native-gesture-handler';
 
 const Stack = createStackNavigator()

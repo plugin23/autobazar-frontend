@@ -4,16 +4,9 @@ import CarItem from './CarItem'
 import CarEdit from './CarEdit'
 import CarScreen from './CarScreen';
 import { StyleSheet, Text, View, FlatList, TouchableOpacity, ActivityIndicator, ScrollView } from 'react-native';
-import fetchAPI from '../Api'
+import {fetchAPI}  from '../Api'
 
-<<<<<<< HEAD
 
-<<<<<<< HEAD
-
-=======
->>>>>>> 58ddc4d81f05cd5a79f868df9fce185583b9f40c
-=======
->>>>>>> my_branch
 const Stack = createStackNavigator()
 
 const ProfileScreen = (props) => {
@@ -25,20 +18,6 @@ const ProfileScreen = (props) => {
     const [phoneNumber, setPhoneNumber] = useState("")
     const [email, setEmail] = useState("")
     const [ownedCars, setOwnedCars] = useState([])
-<<<<<<< HEAD
-
-    //Need to resolve loop fetching !
-    /*const fetchUserCars = (result) => {
-        console.log(result[0].own_advertisement)
-        console.log(result[0].favourites)
-        setOwn(result[0].own_advertisement)
-        setFavourites(result[0].favourites)
-        fetchAPI(`api/autobazar/users/${props.userId}` + '/own_advertisement', 'GET').then(result => { 
-            console.log(result)
-        })
-    }*/   
-=======
->>>>>>> 58ddc4d81f05cd5a79f868df9fce185583b9f40c
     
     useEffect(() => { 
         const getCarsObject = async () => {

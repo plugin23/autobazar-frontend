@@ -5,7 +5,7 @@ import React from 'react';
 import { useState } from "react";
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 import { StyleSheet, Text, View, Button, TextInput, Alert, ActivityIndicator, TouchableOpacity} from 'react-native';
-import fetchAPI from '../Api'
+import {fetchAPI}  from '../Api'
 
 const Stack = createStackNavigator()
 
@@ -28,17 +28,26 @@ const LoginScreen = (props) => {
             password: password
         }
 
-        fetchAPI('api/autobazar/users/login', 'POST', bodyObject).then(result => {
-            setIsLoading(false)
 
-            if (result.id) {
+        const fetchObject = {
+            method: 'POST',
+            headers: {
+                'Content-type': 'application/json'
+            },
+            body: JSON.stringify(bodyObject)
+        }
+
+        fetch('https://fiit-autobazar-backend.herokuapp.com/api/autobazar/users/login' , fetchObject).then(response => response.json()).then(response => {
+            
+            if (response.id) {
                 //alert(result)
-                props.loggedIn(result.id)
+                props.loggedIn(response.id)
             }
             else { //ak uzivatel zada zle heslo alebo meno
                 Alert.alert("Nesprávne údaje", "Údaje, ktoré ste zadali nie sú správne", [{ text: "OK", onPress: () => { } }])
             }
-        })
+        })        
+
     }
     
     return (

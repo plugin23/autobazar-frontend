@@ -4,7 +4,8 @@ import CarItem from './CarItem'
 import CarScreen from './CarScreen';
 import { StyleSheet, Text, View, FlatList, SafeAreaView, ActivityIndicator, ScrollView } from 'react-native';
 import { useIsFocused } from '@react-navigation/native';
-import fetchAPI from '../Api'
+import {fetchAPI}  from '../Api'
+
 
 const Stack = createStackNavigator()
 

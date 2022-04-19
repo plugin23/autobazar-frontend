@@ -1,4 +1,4 @@
-fetchAPI = (url, method, bodyObject) => {
+export const fetchAPI = (url, method, bodyObject) => {
     bodyObject = JSON.stringify(bodyObject)
 
     const fetchObject = {
@@ -16,6 +16,5 @@ fetchAPI = (url, method, bodyObject) => {
             resolve(response)
         })
     })
-}
+} 
 
-export default fetchAPI
