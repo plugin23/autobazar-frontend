@@ -3,7 +3,6 @@ import CarItem from './CarItem'
 import CarEdit from './CarEdit'
 import React, { useEffect, useState } from 'react';
 import { StyleSheet, View, FlatList, SafeAreaView, ActivityIndicator, Text} from 'react-native';
-import {fetchAPI}  from '../Api'
 import { ScrollView } from 'react-native-gesture-handler';
 import CarScreen from './CarScreen';
 import { useIsFocused } from '@react-navigation/native';

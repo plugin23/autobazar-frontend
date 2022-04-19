@@ -5,7 +5,6 @@ import React from 'react';
 import { useState } from "react";
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 import { StyleSheet, Text, View, Button, TextInput, Alert, ActivityIndicator, TouchableOpacity} from 'react-native';
-import {fetchAPI}  from '../Api'
 
 const Stack = createStackNavigator()
 
@@ -38,7 +37,7 @@ const LoginScreen = (props) => {
         }
 
         fetch('https://fiit-autobazar-backend.herokuapp.com/api/autobazar/users/login' , fetchObject).then(response => response.json()).then(response => {
-            console.log(response)
+            //console.log(response)
             if (response.id) {
                 //alert(result)
                 props.loggedIn(response.id)
