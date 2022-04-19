@@ -69,14 +69,12 @@ const AddCarScreen = (props) => {
                 if (response._id) {
                     //alert(result)                   
                     setIsAdded(true)
-                    edit_user(result)
+                    edit_user(response)
                 }
                 else { //ak uzivatel zada zle heslo alebo meno
                     Alert.alert("Údaje, ktoré ste zadali nie sú správne", [{ text: "OK", onPress: () => { } }])
                 }
             })        
-
-
         }
     }, [url])
 
@@ -130,15 +128,24 @@ const AddCarScreen = (props) => {
             own_advertisement: result._id 
         }
         
-        console.log(bodyObjectUser)
+        console.log(bodyObjectUser)       
 
-        fetchAPI(`api/autobazar/users/${result.author}/own_advertisement`, 'PUT', bodyObjectUser).then(result => {
+        const fetchObject = {
+            method: 'PUT',
+            headers: {
+                'Content-type': 'application/json'
+            },
+            body: JSON.stringify(bodyObjectUser)
+        }
 
-            if (result) {
-                alert('pridane aj userovi')                
+        fetch(`https://fiit-autobazar-backend.herokuapp.com/api/autobazar/users/${result.author}/own_advertisement` , fetchObject).then(response => response.json()).then(response => {
+            console.log(response)
+            if (response.id) {
+                //alert(result)
+                props.loggedIn(response.id)
             }
             else { //ak uzivatel zada zle heslo alebo meno
-                Alert.alert("Nepodarilo sa vložiť užívateľovi tento inzerát", "Údaje, ktoré ste zadali nie sú správne", [{ text: "OK", onPress: () => { } }])
+                Alert.alert("Nesprávne údaje", "Údaje, ktoré ste zadali nie sú správne", [{ text: "OK", onPress: () => { } }])
             }
         })
     }

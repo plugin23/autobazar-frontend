@@ -2,7 +2,6 @@ import { StatusBar } from 'expo-status-bar';
 import React, { useState } from 'react';
 import { StyleSheet, Text, View, Button, TextInput, Alert, ActivityIndicator, TouchableOpacity } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
-import {fetchAPI}  from '../Api'
 
 const RegisterScreen = (props) => {
 
@@ -29,18 +28,26 @@ const RegisterScreen = (props) => {
             phone_number: phoneNumber
         }
 
-        fetchAPI('api/autobazar/users', 'POST', bodyObject).then(result => {
+        const fetchObject = {
+            method: 'POST',
+            headers: {
+                'Content-type': 'application/json'
+            },
+            body: JSON.stringify(bodyObject)
+        }
+
+        fetch('https://fiit-autobazar-backend.herokuapp.com/api/autobazar/users' , fetchObject).then(response => response.json()).then(response => {
             console.log(bodyObject)
-            console.log(result)
+            console.log(response)
             setIsLoading(false)
-            if(result.errors) {
+            if(response.errors) {
                 Alert.alert("Užívateľ existuje", "Používateľ s týmto emailom už existuje", [{text:"OK", onPress: () => {}}])
             }
             else { //ak je uspesna registracia
                 Alert.alert("Úspešne zaregistrovaný", "Vaše konto bolo úspešne vytvorené, pokračujte prihlásením...")
                 props.showRegister()
             }
-        })
+        }) 
     }
 
     return (

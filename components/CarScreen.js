@@ -38,18 +38,24 @@ const CarScreen = (props) => {
             setIsFetchingUser(false)
         })
 
+       
         fetchAPI(`api/autobazar/users/${props.route.params.userId}`, 'GET', {}).then(result => {
+            console.log(result);
             setBookmarks(result[0].favourites)
             setIsBookmarked(result[0].favourites.includes(car._id))
         })
+        
+        
+        
     }
 
-    const getCar = () => {
-              
-        fetch('https://fiit-autobazar-backend.herokuapp.com/api/autobazar/cars/${car._id}' ).then(response => response.json()).then(response => {
-            setCar(response)        
-        }) 
+    const getCar = () => {       
 
+        fetch(`https://fiit-autobazar-backend.herokuapp.com/api/autobazar/cars/${car._id}`).then(response => response.json()).then(response => {
+            //console.log(response)
+            setCar(response)
+            })
+        
     }
 
     const carDelete = () => {
