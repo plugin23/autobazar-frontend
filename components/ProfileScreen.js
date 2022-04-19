@@ -13,8 +13,26 @@ const Stack = createStackNavigator()
 const ProfileScreen = (props) => {
 
     const [isFetching, setIsFetching] = useState(true)
+<<<<<<< Updated upstream
     const [cars, setCars] = useState([])
 
+=======
+    const [isFetchingUser, setIsFetchingUser] = useState(true)
+    const [firstName, setFirstName] = useState("")
+    const [lastName, setLastName] = useState("")
+    const [phoneNumber, setPhoneNumber] = useState("")
+    const [email, setEmail] = useState("")
+    const [ownedCars, setOwnedCars] = useState([])
+    useEffect(() => { 
+        const getCarsObject = async () => {
+            
+            const userObj = await fetchAPI(`api/autobazar/users/${props.userId}`, 'GET', {})
+            setFirstName(userObj[0].first_name)
+            setLastName(userObj[0].last_name)
+            setPhoneNumber(userObj[0].phone_number)
+            setEmail(userObj[0].email)
+            setOwnedCars(userObj[0].own_advertisements)
+>>>>>>> Stashed changes
 
     useEffect(() => { 
         fetchCars()
