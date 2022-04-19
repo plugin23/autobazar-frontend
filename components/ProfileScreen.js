@@ -17,19 +17,6 @@ const ProfileScreen = (props) => {
     const [phoneNumber, setPhoneNumber] = useState("")
     const [email, setEmail] = useState("")
     const [ownedCars, setOwnedCars] = useState([])
-
-    //Need to resolve loop fetching !
-    /*const fetchUserCars = (result) => {
-        console.log(result[0].own_advertisement)
-        console.log(result[0].favourites)
-
-        setOwn(result[0].own_advertisement)
-        setFavourites(result[0].favourites)
-
-        fetchAPI(`api/autobazar/users/${props.userId}` + '/own_advertisement', 'GET').then(result => { 
-            console.log(result)
-        })
-    }*/   
     
     useEffect(() => { 
         const getCarsObject = async () => {
