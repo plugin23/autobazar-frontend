@@ -54,17 +54,29 @@ const AddCarScreen = (props) => {
                 body: body,
                 image_photos: [url]
             }
+            
 
-            fetchAPI('api/autobazar/cars', 'POST', bodyObject).then(result => {
-
-                if (result._id) {
+            const fetchObject = {
+                method: 'POST',
+                headers: {
+                    'Content-type': 'application/json'
+                },
+                body: JSON.stringify(bodyObject)
+            }
+    
+            fetch('https://fiit-autobazar-backend.herokuapp.com/api/autobazar/cars' , fetchObject).then(response => response.json()).then(response => {
+                
+                if (response._id) {
+                    //alert(result)                   
                     setIsAdded(true)
                     edit_user(result)
                 }
-                else {
+                else { //ak uzivatel zada zle heslo alebo meno
                     Alert.alert("Údaje, ktoré ste zadali nie sú správne", [{ text: "OK", onPress: () => { } }])
                 }
-            });
+            })        
+
+
         }
     }, [url])
 

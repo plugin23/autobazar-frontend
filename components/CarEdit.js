@@ -32,11 +32,19 @@ const CarEdit = (props) => {
             description: description,
             engine_cap: engineCap,
             body: body
+        }      
+
+        const fetchObject = {
+            method: 'PUT',
+            headers: {
+                'Content-type': 'application/json'
+            },
+            body: JSON.stringify(bodyObject)
         }
 
-        fetchAPI(`api/autobazar/cars/${car._id}`, 'PUT', bodyObject).then(result => {
-            navigation.goBack()
-        })
+        fetch('https://fiit-autobazar-backend.herokuapp.com/api/autobazar/cars/${car._id}' , fetchObject).then(response => response.json()).then(response => {
+            navigation.goBack()          
+        })        
     }
 
     return (

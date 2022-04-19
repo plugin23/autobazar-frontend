@@ -45,18 +45,28 @@ const CarScreen = (props) => {
     }
 
     const getCar = () => {
-        fetchAPI(`api/autobazar/cars/${car._id}`, 'GET', {}).then(result => {
-            setCar(result)
-        })
+              
+        fetch('https://fiit-autobazar-backend.herokuapp.com/api/autobazar/cars/${car._id}' ).then(response => response.json()).then(response => {
+            setCar(response)        
+        }) 
+
     }
 
     const carDelete = () => {
         Alert.alert("Zmazať inzerát", "Ste si istý že chcete vymazať váš inzerát?", [{
-            text: "Áno", onPress: () => {
-                fetchAPI(`api/autobazar/cars/${car._id}`, 'DELETE', {}).then(result => {
+            text: "Áno", onPress: () => {                
+                const fetchObject = {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-type': 'application/json'
+                    },
+                    body: {}
+                }        
+                fetch('https://fiit-autobazar-backend.herokuapp.com/api/autobazar/cars/${car._id}' , fetchObject).then(response => response.json()).then(response => {
                     Alert.alert("Inzerát bol úspešne vymazaný")
-                    navigation.goBack()
-                })
+                    navigation.goBack()    
+                
+                }) 
             },
         }, {
             text: "Nie", onPress: () => { }

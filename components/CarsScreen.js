@@ -27,10 +27,10 @@ const CarsScreen = (props) => {
     const fetchCars = () => {
         setIsFetching(true)
 
-        fetchAPI('api/autobazar/cars', 'GET', {}).then(result => {
-            setCars(result)
-            setIsFetching(false)
-        })
+        fetch('https://fiit-autobazar-backend.herokuapp.com/api/autobazar/cars' ).then(response => response.json()).then(response => {
+            setCars(response)
+            setIsFetching(false)       
+        }) 
         
     }
 

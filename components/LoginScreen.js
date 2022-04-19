@@ -38,7 +38,7 @@ const LoginScreen = (props) => {
         }
 
         fetch('https://fiit-autobazar-backend.herokuapp.com/api/autobazar/users/login' , fetchObject).then(response => response.json()).then(response => {
-            
+            console.log(response)
             if (response.id) {
                 //alert(result)
                 props.loggedIn(response.id)
