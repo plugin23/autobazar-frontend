@@ -18,6 +18,4 @@ fetchAPI = (url, method, bodyObject) => {
     })
 }
 
-module.exports = {
-    fetchAPI
-}
+export default fetchAPI
