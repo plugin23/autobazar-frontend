@@ -1,63 +1,75 @@
-import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack'
-import { StatusBar } from 'expo-status-bar';
 import React, { useState, useEffect } from 'react';
+import CarItem from './CarItem'
+import CarScreen from './CarScreen';
+import { StyleSheet, Text, View, FlatList, TouchableOpacity, ActivityIndicator, ScrollView } from 'react-native';
 import fetchAPI from '../Api'
-import { StyleSheet, View, FlatList, SafeAreaView, ActivityIndicator} from 'react-native';
-import UserItem from './UserItem';
-
 
 const Stack = createStackNavigator()
 
 const ProfileScreen = (props) => {
 
     const [isFetching, setIsFetching] = useState(true)
-    const [cars, setCars] = useState([])
-    const [cars_array, setCars_array] = useState([])
-    const [favourites, setFavourites] = useState([])
-    const [own, setOwn] = useState([])
-
-    useEffect(() => { 
-        fetchCars()
-    }, [])   
-
-    const fetchCars = () => {
-        setIsFetching(true)
-        
-        fetchAPI('api/autobazar/users/'+ props.userId, 'GET').then(result => {    
-
-            if (result[0]._id) {
-                setCars(result)
-                setIsFetching(false)
-                fetchUserCars(result)
-            }
-            else { 
-                alert("Nepodarilo sa naloadovať dáta!", [{ text: "OK", onPress: () => { } }])
-            }
-        })         
-
-
-    }
-
+    const [isFetchingUser, setIsFetchingUser] = useState(true)
+    const [firstName, setFirstName] = useState("")
+    const [lastName, setLastName] = useState("")
+    const [phoneNumber, setPhoneNumber] = useState("")
+    const [email, setEmail] = useState("")
+    const [ownedCars, setOwnedCars] = useState([])
 
     //Need to resolve loop fetching !
-    const fetchUserCars = (result) => {
+    /*const fetchUserCars = (result) => {
         console.log(result[0].own_advertisement)
         console.log(result[0].favourites)
 
         setOwn(result[0].own_advertisement)
         setFavourites(result[0].favourites)
 
-        fetchAPI('api/autobazar/cars/'+ result[0].own_advertisement, 'GET').then(result => { 
+        fetchAPI(`api/autobazar/users/${props.userId}` + '/own_advertisement', 'GET').then(result => { 
             console.log(result)
         })
-    }   
+    }*/   
     
+    useEffect(() => { 
+        const getCarsObject = async () => {
+            
+            const userObj = await fetchAPI(`api/autobazar/users/${props.userId}`, 'GET', {})
+            setFirstName(userObj[0].first_name)
+            setLastName(userObj[0].last_name)
+            setPhoneNumber(userObj[0].phone_number)
+            setEmail(userObj[0].email)
+            setOwnedCars(userObj[0].own_advertisements)
+
+            let carObjects = []
+            for (var i = 0; i < userObj[0].own_advertisements.length; i++) {
+                let carId = userObj[0].own_advertisements[i]
+                
+                let carObj = await fetchAPI(`api/autobazar/cars/${carId}`, 'GET', {})
+                
+                if (!carObj.errors) {
+                    carObjects.push(carObj)
+                }
+            }
+            
+            setOwnedCars(carObjects)
+        }
+
+        isFetching && getCarsObject().then(() => {
+            setIsFetchingUser(false)
+            setIsFetching(false)
+        })
+        
+    }, [isFetching])
+
+
+    const onRefresh = () => {
+        setIsFetching(true)
+        setIsFetchingUser(true)
+    }
 
     const renderItem = (item) => {
         return (
-            <UserItem car={item.item} logOut={props.logOut} />
-            //<CarItem car={item.item} userId={props.userId}/>
+            <CarItem car={item.item} userId={props.userId}/>
         )
     }
 
@@ -67,32 +79,92 @@ const ProfileScreen = (props) => {
         )
     }
 
+    const renderHeader = () => {
+        return (
+            <View style={styles.container}>
+                <View style={styles.profileContainer}>
+                    <Text style={styles.logo}>Profil</Text>
+                    <Text style={styles.contact}><Text style={{ fontWeight: "bold" }}>Meno:</Text> {firstName}</Text>
+                    <Text style={styles.contact}><Text style={{ fontWeight: "bold" }}>Priezvisko:</Text> {lastName}</Text>
+                    <Text style={styles.contact}><Text style={{ fontWeight: "bold" }}>Telefónne číslo:</Text> {phoneNumber}</Text>
+                    <Text style={styles.contact}><Text style={{ fontWeight: "bold" }}>Email: </Text> {email}</Text>
+                    <View style={styles.separator} />
+                    <TouchableOpacity
+                        onPress={props.logOut}
+                        style={styles.buttonStyle}>
+                        <Text style={styles.buttonText}>Odhlásiť sa</Text>
+                    </TouchableOpacity>
+                    <Text style={styles.smallLogo}>Moje inzeráty</Text>
+                </View>
+            </View>
+        )  
+    }
     
     return (
-        <SafeAreaView style={styles.container}>
-            {isFetching ? (
-                <ActivityIndicator size="large" />
-            ) : (
-                <FlatList
-                    data={cars}
-                    renderItem={item => renderItem(item)}
-                    keyExtractor={item => item._id.toString()}
-                    ItemSeparatorComponent={itemSeparator}
-                    showsVerticalScrollIndicator={false}
-                    refreshing={isFetching}
-                    onRefresh={fetchCars}
-                />
-            )}
-        </SafeAreaView>
+        <Stack.Navigator>
+            <Stack.Screen name="profileScreen" options={{title: '', headerShown: false}} children={(props) =>
+                <View style={styles.container}>
+                    {isFetching ? (
+                        <ActivityIndicator size="large" />
+                    ) : (
+                        <FlatList
+                            data={ownedCars}
+                            renderItem={item => renderItem(item)}
+                            keyExtractor={item => item._id.toString()}
+                            ItemSeparatorComponent={itemSeparator}
+                            ListHeaderComponent={renderHeader}
+                            showsVerticalScrollIndicator={false}
+                            refreshing={isFetching}
+                            onRefresh={onRefresh}
+                        />
+                    )}
+                </View>
+                
+            } />
+            <Stack.Screen name="carScreen" options={{title: ''}} children={(props) =>
+                <ScrollView>
+                    <CarScreen {...props} />
+                </ScrollView>
+            } />
+        </Stack.Navigator>
     );
 }
 
 const styles = StyleSheet.create({
     container: {
         alignItems: 'center',
+        flex: 1
     },
     separator: {
         marginVertical: 8
+    },
+    logo: {
+        fontSize: 45,
+        marginTop: 30,
+        fontWeight: "bold",
+        marginBottom: 20
+    },
+    smallLogo: {
+        fontSize: 25,
+        marginTop: 20,
+        fontWeight: "bold",
+        marginBottom: 20
+    },
+    buttonStyle: {
+        width: 300,
+        height: 50,
+        alignItems: 'center',
+        padding: 15,
+        borderRadius: 100,
+        backgroundColor: 'black'
+    },
+    buttonText: {
+        fontSize: 15,
+        color: '#fff'
+    },
+    profileContainer: {
+        alignItems: 'flex-start',
+        justifyContent: 'flex-start',
     },
     loading: {
         paddingVertical: 50

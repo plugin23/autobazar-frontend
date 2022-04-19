@@ -35,7 +35,6 @@ const CarsScreen = (props) => {
     }
 
     const renderItem = (item) => {
-        console.log("id: " + props.userId)
         return (
             <CarItem car={item.item} userId={props.userId}/>
         )
@@ -47,12 +46,18 @@ const CarsScreen = (props) => {
         )
     }
 
+    const renderHeader = () => {
+        return (
+            <View style={styles.container}>
+                <Text style={styles.logo}>Všetky inzeráty</Text>
+            </View>
+        )  
+    }
 
     return (
         <Stack.Navigator>
             <Stack.Screen name="allCars" options={{title: '', headerShown: false}} children={(props) =>
                 <View style={styles.container}>
-                <Text style={styles.logo}>Všetky inzeráty</Text>
                     {isFetching ? (
                         <ActivityIndicator size="large" />
                     ) : (
@@ -61,6 +66,7 @@ const CarsScreen = (props) => {
                             renderItem={item => renderItem(item)}
                             keyExtractor={item => item._id.toString()}
                             ItemSeparatorComponent={itemSeparator}
+                            ListHeaderComponent={renderHeader}
                             showsVerticalScrollIndicator={false}
                             refreshing={isFetching}
                             onRefresh={fetchCars}

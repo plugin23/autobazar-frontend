@@ -18,41 +18,13 @@ const FavouritesScreen = (props) => {
         const getCarsObject = async () => {
             setIsFetching(true)
     
-            const userObj = await fetchAPI(`api/autobazar/users/${props.userId}`, 'GET', {})
-            setBookmarks(userObj[0].favourites)
+            const userBookmarks = await fetchAPI(`api/autobazar/users/${props.userId}` + '/favourites', 'GET', {})
+            setBookmarks(userBookmarks)
 
             
             let carObjects = []
-            for (var i = 0; i < userObj[0].favourites.length; i++) {
-                let carId = userObj[0].favourites[i]
-                let carObj = await fetchAPI(`api/autobazar/cars/${carId}`, 'GET', {})
-                
-                if (!carObj.errors) {
-                    carObjects.push(carObj)
-                }
-            }
-            
-            setBookmarkCars(carObjects)
-        }
-
-        getCarsObject().then(() => {
-            setIsFetching(false)
-        })
-        
-    }, [])
-
-    useEffect(() => { 
-        const getCarsObject = async () => {
-            setIsFetching(true)
-    
-            const userObj = await fetchAPI(`api/autobazar/users/${props.userId}`, 'GET', {})
-            setBookmarks(userObj[0].favourites)
-
-            
-            let carObjects = []
-            for (var i = 0; i < userObj[0].favourites.length; i++) {
-                let carId = userObj[0].favourites[i]
-                console.log(userObj[0].favourites[i])
+            for (var i = 0; i < userBookmarks.length; i++) {
+                let carId = userBookmarks[i]
                 let carObj = await fetchAPI(`api/autobazar/cars/${carId}`, 'GET', {})
                 
                 if (!carObj.errors) {
@@ -82,6 +54,14 @@ const FavouritesScreen = (props) => {
         )
     }
 
+    const renderHeader = () => {
+        return (
+            <View style={styles.container}>
+                <Text style={styles.logo}>Uložené inzeráty</Text>
+            </View>
+        )  
+    }
+
     const onRefresh = () => {
         setIsFetching(true)
     }
@@ -90,7 +70,6 @@ const FavouritesScreen = (props) => {
         <Stack.Navigator>
             <Stack.Screen name="bookmarkCars" options={{title: '', headerShown: false}} children={(props) =>
                 <View style={styles.container}>
-                    <Text style={styles.logo}>Uložené inzeráty</Text>
                     {isFetching ? (
                         <ActivityIndicator size="large" />
                     ) : (
@@ -98,6 +77,7 @@ const FavouritesScreen = (props) => {
                             data={bookmarkCars}
                             renderItem={item => renderItem(item)}
                             keyExtractor={item => item._id.toString()}
+                            ListHeaderComponent={renderHeader}
                             ItemSeparatorComponent={itemSeparator}
                             showsVerticalScrollIndicator={false}
                             refreshing={isFetching}
@@ -105,7 +85,6 @@ const FavouritesScreen = (props) => {
                         />
                     )}
                 </View>
-                
             } />
             <Stack.Screen name="carScreen" options={{title: ''}} children={(props) =>
                 <ScrollView>
@@ -128,7 +107,7 @@ const styles = StyleSheet.create({
         paddingVertical: 50
     },    
     logo: {
-        fontSize: 50,
+        fontSize: 45,
         textAlign: "center",
         marginTop: 30,
         marginBottom: 20
