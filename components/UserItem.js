@@ -2,7 +2,8 @@ import React, { useState } from 'react'
 import { StyleSheet, Text, View,  TouchableOpacity } from 'react-native';
 
 const UserItem = (props) => {
-    const [car, setCar] = useState(props.car)
+    const [car, setCar] = useState(props.user)
+    console.log(props.user)
     
     return (
             <TouchableOpacity>

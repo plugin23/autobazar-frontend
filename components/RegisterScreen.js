@@ -2,7 +2,7 @@ import { StatusBar } from 'expo-status-bar';
 import React, { useState } from 'react';
 import { StyleSheet, Text, View, Button, TextInput, Alert, ActivityIndicator, TouchableOpacity } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
-import { fetchAPI } from '../Api'
+import fetchAPI from '../Api'
 
 const RegisterScreen = (props) => {
 
@@ -30,9 +30,11 @@ const RegisterScreen = (props) => {
         }
 
         fetchAPI('api/autobazar/users', 'POST', bodyObject).then(result => {
+            console.log(bodyObject)
+            console.log(result)
             setIsLoading(false)
-            if(result.message == "User with this email already exists" || result.message == "Password already used") {
-                Alert.alert("Užívateľ existuje", "Používateľ s týmto menom už existuje", [{text:"OK", onPress: () => {}}])
+            if(result.errors) {
+                Alert.alert("Užívateľ existuje", "Používateľ s týmto emailom už existuje", [{text:"OK", onPress: () => {}}])
             }
             else { //ak je uspesna registracia
                 Alert.alert("Úspešne zaregistrovaný", "Vaše konto bolo úspešne vytvorené, pokračujte prihlásením...")

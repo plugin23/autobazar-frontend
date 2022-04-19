@@ -2,8 +2,8 @@ import { createStackNavigator } from '@react-navigation/stack'
 import CarItem from './CarItem'
 import CarEdit from './CarEdit'
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, View, FlatList, SafeAreaView, ActivityIndicator} from 'react-native';
-import { fetchAPI } from '../Api'
+import { StyleSheet, View, FlatList, SafeAreaView, ActivityIndicator, Text} from 'react-native';
+import fetchAPI from '../Api'
 import { ScrollView } from 'react-native-gesture-handler';
 import CarScreen from './CarScreen';
 import { useIsFocused } from '@react-navigation/native';
@@ -35,7 +35,6 @@ const CarsScreen = (props) => {
     }
 
     const renderItem = (item) => {
-        console.log("id: " + props.userId)
         return (
             <CarItem car={item.item} userId={props.userId}/>
         )
@@ -47,11 +46,18 @@ const CarsScreen = (props) => {
         )
     }
 
+    const renderHeader = () => {
+        return (
+            <View style={styles.container}>
+                <Text style={styles.logo}>Všetky inzeráty</Text>
+            </View>
+        )  
+    }
 
     return (
         <Stack.Navigator>
             <Stack.Screen name="allCars" options={{title: '', headerShown: false}} children={(props) =>
-                <SafeAreaView style={styles.container}>
+                <View style={styles.container}>
                     {isFetching ? (
                         <ActivityIndicator size="large" />
                     ) : (
@@ -60,12 +66,13 @@ const CarsScreen = (props) => {
                             renderItem={item => renderItem(item)}
                             keyExtractor={item => item._id.toString()}
                             ItemSeparatorComponent={itemSeparator}
+                            ListHeaderComponent={renderHeader}
                             showsVerticalScrollIndicator={false}
                             refreshing={isFetching}
                             onRefresh={fetchCars}
                         />
-                )}
-                </SafeAreaView>
+                    )}
+                </View>
             } />
             <Stack.Screen name="carScreen" options={{title: ''}} children={(props) =>
                 <ScrollView>
@@ -84,9 +91,16 @@ const CarsScreen = (props) => {
 const styles = StyleSheet.create({
     container: {
         alignItems: 'center',
+        flex: 1
     },
     separator: {
         marginVertical: 8
+    },
+    logo: {
+        fontSize: 50,
+        textAlign: "center",
+        marginTop: 30,
+        marginBottom: 20
     },
     loading: {
         paddingVertical: 50

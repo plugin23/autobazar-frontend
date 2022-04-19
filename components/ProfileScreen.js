@@ -8,8 +8,6 @@ import UserItem from './UserItem';
 import FavouriteItem from './FavouriteItem'
 import CarItem from './CarItem'
 
-
-
 const Stack = createStackNavigator()
 
 const ProfileScreen = (props) => {
@@ -31,25 +29,19 @@ const ProfileScreen = (props) => {
             //console.log(result)
 
             if (result[0]._id) {
-                setCars(result)
-                //setOwn(result[0].own_advertisement)
-                //setFavourites(result[0].favourites)
+                setCars(result)                
                 setIsFetching(false)
-                fetchUserCars(result)
+                setOwn(result[0].own_advertisement)        
+                fetchUserCars()  
             }
             else { 
                 alert("Nepodarilo sa naloadovať dáta!", [{ text: "OK", onPress: () => { } }])
             }
         })         
-
-
     }
-
 
     //Need to resolve loop fetching !
     const fetchUserCars = (result) => {
-        console.log(result[0].own_advertisement)
-        console.log(result[0].favourites)
 
         setOwn(result[0].own_advertisement)
         setFavourites(result[0].favourites)
@@ -61,9 +53,10 @@ const ProfileScreen = (props) => {
     
 
     const renderItem = (item) => {
+        console.log(item.item)
         return (
-            <UserItem car={item.item} logOut={props.logOut} />
-            //<CarItem car={item.item} userId={props.userId}/>
+            <UserItem user={item.item} logOut={props.logOut} />
+            //<CarItem car={own} userId={props.userId}/>
         )
     }
 
