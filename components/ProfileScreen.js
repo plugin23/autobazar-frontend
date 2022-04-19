@@ -5,11 +5,14 @@ import CarScreen from './CarScreen';
 import { StyleSheet, Text, View, FlatList, TouchableOpacity, ActivityIndicator, ScrollView } from 'react-native';
 import fetchAPI from '../Api'
 
+<<<<<<< HEAD
 
 <<<<<<< HEAD
 
 =======
 >>>>>>> 58ddc4d81f05cd5a79f868df9fce185583b9f40c
+=======
+>>>>>>> my_branch
 const Stack = createStackNavigator()
 
 const ProfileScreen = (props) => {
@@ -74,6 +77,7 @@ const ProfileScreen = (props) => {
     }
 
     const renderItem = (item) => {
+        console.log(item.item)
         return (
             <CarItem car={item.item} userId={props.userId}/>
         )
