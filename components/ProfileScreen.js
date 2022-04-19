@@ -26,11 +26,11 @@ const ProfileScreen = (props) => {
             setLastName(userObj[0].last_name)
             setPhoneNumber(userObj[0].phone_number)
             setEmail(userObj[0].email)
-            setOwnedCars(userObj[0].own_advertisements)
+            setOwnedCars(userObj[0].own_advertisement)
 
             let carObjects = []
-            for (var i = 0; i < userObj[0].own_advertisements.length; i++) {
-                let carId = userObj[0].own_advertisements[i]
+            for (var i = 0; i < userObj[0].own_advertisement.length; i++) {
+                let carId = userObj[0].own_advertisement[i]
                 
                 let carObj = await  fetch(`https://fiit-autobazar-backend.herokuapp.com/api/autobazar/cars/${carId}`).then(response => response.json())
                 
@@ -56,7 +56,6 @@ const ProfileScreen = (props) => {
     }
 
     const renderItem = (item) => {
-        console.log(item.item)
         return (
             <CarItem car={item.item} userId={props.userId}/>
         )

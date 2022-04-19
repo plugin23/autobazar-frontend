@@ -37,8 +37,6 @@ const RegisterScreen = (props) => {
         }
 
         fetch('https://fiit-autobazar-backend.herokuapp.com/api/autobazar/users' , fetchObject).then(response => response.json()).then(response => {
-            console.log(bodyObject)
-            console.log(response)
             setIsLoading(false)
             if(response.errors) {
                 Alert.alert("Užívateľ existuje", "Používateľ s týmto emailom už existuje", [{text:"OK", onPress: () => {}}])

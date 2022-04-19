@@ -42,7 +42,6 @@ const FavouritesScreen = (props) => {
     }, [isFetching])
 
     const renderItem = (item) => {
-        //console.log("id: " + props.userId)
         return (
             <CarItem car={item.item} userId={props.userId}/>
         )

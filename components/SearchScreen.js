@@ -14,7 +14,6 @@ const SearchScreen = (props) => {
     const [search, setSearch] = useState("")
 
     const renderItem = (item) => {
-        //console.log("id: " + props.userId)
         return (
             <CarItem car={item.item} userId={props.userId}/>
         )
