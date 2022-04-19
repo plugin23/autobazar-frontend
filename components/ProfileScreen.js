@@ -6,7 +6,10 @@ import { StyleSheet, Text, View, FlatList, TouchableOpacity, ActivityIndicator, 
 import fetchAPI from '../Api'
 
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> 58ddc4d81f05cd5a79f868df9fce185583b9f40c
 const Stack = createStackNavigator()
 
 const ProfileScreen = (props) => {
@@ -18,6 +21,7 @@ const ProfileScreen = (props) => {
     const [phoneNumber, setPhoneNumber] = useState("")
     const [email, setEmail] = useState("")
     const [ownedCars, setOwnedCars] = useState([])
+<<<<<<< HEAD
 
     //Need to resolve loop fetching !
     /*const fetchUserCars = (result) => {
@@ -29,6 +33,8 @@ const ProfileScreen = (props) => {
             console.log(result)
         })
     }*/   
+=======
+>>>>>>> 58ddc4d81f05cd5a79f868df9fce185583b9f40c
     
     useEffect(() => { 
         const getCarsObject = async () => {
