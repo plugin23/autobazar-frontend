@@ -4,7 +4,6 @@ import CarItem from './CarItem'
 import CarEdit from './CarEdit'
 import CarScreen from './CarScreen';
 import { StyleSheet, Text, View, FlatList, TouchableOpacity, ActivityIndicator, ScrollView } from 'react-native';
-import fetchAPI from '../Api'
 
 
 const Stack = createStackNavigator()
@@ -22,18 +21,18 @@ const ProfileScreen = (props) => {
     useEffect(() => { 
         const getCarsObject = async () => {
             
-            const userObj = await fetchAPI(`api/autobazar/users/${props.userId}`, 'GET', {})
+            const userObj = await fetch(`https://fiit-autobazar-backend.herokuapp.com/api/autobazar/users/${props.userId}`).then(response => response.json())
             setFirstName(userObj[0].first_name)
             setLastName(userObj[0].last_name)
             setPhoneNumber(userObj[0].phone_number)
             setEmail(userObj[0].email)
-            setOwnedCars(userObj[0].own_advertisements)
+            setOwnedCars(userObj[0].own_advertisement)
 
             let carObjects = []
-            for (var i = 0; i < userObj[0].own_advertisements.length; i++) {
-                let carId = userObj[0].own_advertisements[i]
+            for (var i = 0; i < userObj[0].own_advertisement.length; i++) {
+                let carId = userObj[0].own_advertisement[i]
                 
-                let carObj = await fetchAPI(`api/autobazar/cars/${carId}`, 'GET', {})
+                let carObj = await  fetch(`https://fiit-autobazar-backend.herokuapp.com/api/autobazar/cars/${carId}`).then(response => response.json())
                 
                 if (!carObj.errors) {
                     carObjects.push(carObj)

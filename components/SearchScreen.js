@@ -3,8 +3,6 @@ import React, { useState, useEffect } from 'react';
 import CarItem from './CarItem'
 import CarScreen from './CarScreen';
 import { StyleSheet, Text, View, FlatList, TouchableOpacity, ActivityIndicator, ScrollView } from 'react-native';
-import { useIsFocused } from '@react-navigation/native';
-import fetchAPI from '../Api'
 import { TextInput } from 'react-native-gesture-handler';
 
 const Stack = createStackNavigator()
@@ -16,7 +14,6 @@ const SearchScreen = (props) => {
     const [search, setSearch] = useState("")
 
     const renderItem = (item) => {
-        //console.log("id: " + props.userId)
         return (
             <CarItem car={item.item} userId={props.userId}/>
         )
@@ -44,11 +41,12 @@ const SearchScreen = (props) => {
     const searchCars = () => {
         if (search != "") {
             setIsFetching(true)
-            fetchAPI(`api/autobazar/cars/search/${search}`, 'GET', {}).then(result => {
-                setCars(result)
+            
+            fetch(`https://fiit-autobazar-backend.herokuapp.com/api/autobazar/cars/search/${search}`).then(response => response.json()).then(response => {
+                setCars(response)
                 setIsFetching(false)
-                setSearchDone(true)
-            })   
+                setSearchDone(true)          
+            })    
         }
     }
     

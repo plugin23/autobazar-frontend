@@ -4,7 +4,7 @@ import CarItem from './CarItem'
 import CarScreen from './CarScreen';
 import { StyleSheet, Text, View, FlatList, SafeAreaView, ActivityIndicator, ScrollView } from 'react-native';
 import { useIsFocused } from '@react-navigation/native';
-import fetchAPI from '../Api'
+
 
 const Stack = createStackNavigator()
 
@@ -18,14 +18,14 @@ const FavouritesScreen = (props) => {
         const getCarsObject = async () => {
             setIsFetching(true)
     
-            const userBookmarks = await fetchAPI(`api/autobazar/users/${props.userId}` + '/favourites', 'GET', {})
+            const userBookmarks = await fetch(`https://fiit-autobazar-backend.herokuapp.com/api/autobazar/users/${props.userId}` + '/favourites').then(response => response.json())
             setBookmarks(userBookmarks)
 
             
             let carObjects = []
             for (var i = 0; i < userBookmarks.length; i++) {
                 let carId = userBookmarks[i]
-                let carObj = await fetchAPI(`api/autobazar/cars/${carId}`, 'GET', {})
+                let carObj = await fetch(`https://fiit-autobazar-backend.herokuapp.com/api/autobazar/cars/${carId}`).then(response => response.json())
                 
                 if (!carObj.errors) {
                     carObjects.push(carObj)
@@ -42,7 +42,6 @@ const FavouritesScreen = (props) => {
     }, [isFetching])
 
     const renderItem = (item) => {
-        //console.log("id: " + props.userId)
         return (
             <CarItem car={item.item} userId={props.userId}/>
         )

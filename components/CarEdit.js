@@ -1,9 +1,6 @@
-import { NavigationContainer } from '@react-navigation/native';
-import { createStackNavigator } from '@react-navigation/stack'
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, Text, View, Button, TextInput, Alert, ActivityIndicator, TouchableOpacity} from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
-import fetchAPI from '../Api'
 import { useNavigation } from '@react-navigation/native';
 
 const CarEdit = (props) => {
@@ -32,11 +29,19 @@ const CarEdit = (props) => {
             description: description,
             engine_cap: engineCap,
             body: body
+        }      
+
+        const fetchObject = {
+            method: 'PUT',
+            headers: {
+                'Content-type': 'application/json'
+            },
+            body: JSON.stringify(bodyObject)
         }
 
-        fetchAPI(`api/autobazar/cars/${car._id}`, 'PUT', bodyObject).then(result => {
-            navigation.goBack()
-        })
+        fetch('https://fiit-autobazar-backend.herokuapp.com/api/autobazar/cars/${car._id}' , fetchObject).then(response => response.json()).then(response => {
+            navigation.goBack()          
+        })        
     }
 
     return (

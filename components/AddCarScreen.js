@@ -1,7 +1,6 @@
 import { createStackNavigator } from '@react-navigation/stack'
 import React, { useEffect, useState } from 'react';
 import { StyleSheet, Text, View, Button, TextInput, Alert, ActivityIndicator, TouchableOpacity, Dimensions } from 'react-native';
-import fetchAPI from '../Api'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 import * as ImagePicker from 'expo-image-picker';
 import uuid from 'uuid';
@@ -54,17 +53,27 @@ const AddCarScreen = (props) => {
                 body: body,
                 image_photos: [url]
             }
+            
 
-            fetchAPI('api/autobazar/cars', 'POST', bodyObject).then(result => {
-
-                if (result._id) {
+            const fetchObject = {
+                method: 'POST',
+                headers: {
+                    'Content-type': 'application/json'
+                },
+                body: JSON.stringify(bodyObject)
+            }
+    
+            fetch('https://fiit-autobazar-backend.herokuapp.com/api/autobazar/cars' , fetchObject).then(response => response.json()).then(response => {
+                
+                if (response._id) {
+                    //alert(result)                   
                     setIsAdded(true)
-                    edit_user(result)
+                    edit_user(response)
                 }
-                else {
+                else { //ak uzivatel zada zle heslo alebo meno
                     Alert.alert("Údaje, ktoré ste zadali nie sú správne", [{ text: "OK", onPress: () => { } }])
                 }
-            });
+            })        
         }
     }, [url])
 
@@ -112,21 +121,27 @@ const AddCarScreen = (props) => {
 
 
     const edit_user = (result) => {
-        console.log(result._id)
 
         const bodyObjectUser = {
             own_advertisement: result._id 
         }
-        
-        console.log(bodyObjectUser)
+           
 
-        fetchAPI(`api/autobazar/users/${result.author}/own_advertisement`, 'PUT', bodyObjectUser).then(result => {
+        const fetchObject = {
+            method: 'PUT',
+            headers: {
+                'Content-type': 'application/json'
+            },
+            body: JSON.stringify(bodyObjectUser)
+        }
 
-            if (result) {
-                alert('pridane aj userovi')                
+        fetch(`https://fiit-autobazar-backend.herokuapp.com/api/autobazar/users/${result.author}/own_advertisement` , fetchObject).then(response => response.json()).then(response => {
+            if (response.id) {
+                //alert(result)
+                props.loggedIn(response.id)
             }
             else { //ak uzivatel zada zle heslo alebo meno
-                Alert.alert("Nepodarilo sa vložiť užívateľovi tento inzerát", "Údaje, ktoré ste zadali nie sú správne", [{ text: "OK", onPress: () => { } }])
+                Alert.alert("Nesprávne údaje", "Údaje, ktoré ste zadali nie sú správne", [{ text: "OK", onPress: () => { } }])
             }
         })
     }

@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react'
 import { StyleSheet, Text, View, Image, TouchableOpacity } from 'react-native';
-import CarScreen from './CarScreen'
 import { useNavigation } from '@react-navigation/native';
 
 const CarItem = (props) => {

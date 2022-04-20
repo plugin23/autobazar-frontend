@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react'
 import { StyleSheet, Alert, Text, View, Image, TouchableOpacity, ActivityIndicator } from 'react-native';
-import fetchAPI from '../Api'
 import { Ionicons } from '@expo/vector-icons';
 import { createStackNavigator } from '@react-navigation/stack'
 import { useNavigation, useIsFocused } from '@react-navigation/native';
@@ -20,7 +19,6 @@ const CarScreen = (props) => {
     const isFocused = useIsFocused();
 
     useEffect(() => {
-        //console.log(props.route.params)
         getUser()
     }, [])
 
@@ -29,34 +27,44 @@ const CarScreen = (props) => {
     }, [isFocused])
 
     const getUser = () => {
-
-        fetchAPI(`api/autobazar/users/${props.route.params.car.author}`, 'GET', {}).then(result => {
-            setFirstName(result[0].first_name)
-            setLastName(result[0].last_name)
-            setPhoneNumber(result[0].phone_number)
-            setEmail(result[0].email)
+        fetch(`https://fiit-autobazar-backend.herokuapp.com/api/autobazar/users/${props.route.params.car.author}`).then(response => response.json()).then(response => {
+           
+            setFirstName(response[0].first_name)
+            setLastName(response[0].last_name)
+            setPhoneNumber(response[0].phone_number)
+            setEmail(response[0].email)
             setIsFetchingUser(false)
-        })
+            })
 
-        fetchAPI(`api/autobazar/users/${props.route.params.userId}`, 'GET', {}).then(result => {
-            setBookmarks(result[0].favourites)
-            setIsBookmarked(result[0].favourites.includes(car._id))
-        })
+        fetch(`https://fiit-autobazar-backend.herokuapp.com/api/autobazar/users/${props.route.params.userId}`).then(response => response.json()).then(response => {
+            setBookmarks(response[0].favourites)
+            setIsBookmarked(response[0].favourites.includes(car._id))
+            })
     }
 
-    const getCar = () => {
-        fetchAPI(`api/autobazar/cars/${car._id}`, 'GET', {}).then(result => {
-            setCar(result)
-        })
+    const getCar = () => {       
+
+        fetch(`https://fiit-autobazar-backend.herokuapp.com/api/autobazar/cars/${car._id}`).then(response => response.json()).then(response => {
+            setCar(response)
+            })
+        
     }
 
     const carDelete = () => {
         Alert.alert("Zmazať inzerát", "Ste si istý že chcete vymazať váš inzerát?", [{
-            text: "Áno", onPress: () => {
-                fetchAPI(`api/autobazar/cars/${car._id}`, 'DELETE', {}).then(result => {
+            text: "Áno", onPress: () => {                
+                const fetchObject = {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-type': 'application/json'
+                    },
+                    body: {}
+                }        
+                fetch('https://fiit-autobazar-backend.herokuapp.com/api/autobazar/cars/${car._id}' , fetchObject).then(response => response.json()).then(response => {
                     Alert.alert("Inzerát bol úspešne vymazaný")
-                    navigation.goBack()
-                })
+                    navigation.goBack()    
+                
+                }) 
             },
         }, {
             text: "Nie", onPress: () => { }
@@ -71,10 +79,17 @@ const CarScreen = (props) => {
         const bookmarkObject = {
             favourites: newBookmarks
         }
+        const fetchObject = {
+            method: 'PUT',
+            headers: {
+                'Content-type': 'application/json'
+            },
+            body: JSON.stringify(bookmarkObject)
+        }
 
-        fetchAPI(`api/autobazar/users/${props.route.params.userId}`, 'PUT', bookmarkObject).then(result => {
+        fetch(`https://fiit-autobazar-backend.herokuapp.com/api/autobazar/users/${props.route.params.userId}` , fetchObject).then(response => response.json()).then(response => {
             setIsBookmarked(true)
-        })
+        }) 
     }
 
     const deleteFromBookmarks = () => {
@@ -90,9 +105,17 @@ const CarScreen = (props) => {
             favourites: newBookmarks
         }
 
-        fetchAPI(`api/autobazar/users/${props.route.params.userId}`, 'PUT', bookmarkObject).then(result => {
+        const fetchObject = {
+            method: 'PUT',
+            headers: {
+                'Content-type': 'application/json'
+            },
+            body: JSON.stringify(bookmarkObject)
+        }
+
+        fetch(`https://fiit-autobazar-backend.herokuapp.com/api/autobazar/users/${props.route.params.userId}` , fetchObject).then(response => response.json()).then(response => {
             setIsBookmarked(false)
-        })
+        }) 
     }
 
 

@@ -3,7 +3,6 @@ import CarItem from './CarItem'
 import CarEdit from './CarEdit'
 import React, { useEffect, useState } from 'react';
 import { StyleSheet, View, FlatList, SafeAreaView, ActivityIndicator, Text} from 'react-native';
-import fetchAPI from '../Api'
 import { ScrollView } from 'react-native-gesture-handler';
 import CarScreen from './CarScreen';
 import { useIsFocused } from '@react-navigation/native';
@@ -27,10 +26,10 @@ const CarsScreen = (props) => {
     const fetchCars = () => {
         setIsFetching(true)
 
-        fetchAPI('api/autobazar/cars', 'GET', {}).then(result => {
-            setCars(result)
-            setIsFetching(false)
-        })
+        fetch('https://fiit-autobazar-backend.herokuapp.com/api/autobazar/cars' ).then(response => response.json()).then(response => {
+            setCars(response)
+            setIsFetching(false)       
+        }) 
         
     }
 
