@@ -46,7 +46,7 @@ const CarScreen = (props) => {
 
         fetch(`https://fiit-autobazar-backend.herokuapp.com/api/autobazar/cars/${car._id}`).then(response => response.json()).then(response => {
             setCar(response)
-            })
+        })
         
     }
 
@@ -60,7 +60,7 @@ const CarScreen = (props) => {
                     },
                     body: {}
                 }        
-                fetch('https://fiit-autobazar-backend.herokuapp.com/api/autobazar/cars/${car._id}' , fetchObject).then(response => response.json()).then(response => {
+                fetch(`https://fiit-autobazar-backend.herokuapp.com/api/autobazar/cars/${car._id}` , fetchObject).then(response => response.json()).then(response => {
                     Alert.alert("Inzerát bol úspešne vymazaný")
                     navigation.goBack()    
                 

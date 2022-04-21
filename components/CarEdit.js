@@ -39,7 +39,7 @@ const CarEdit = (props) => {
             body: JSON.stringify(bodyObject)
         }
 
-        fetch('https://fiit-autobazar-backend.herokuapp.com/api/autobazar/cars/${car._id}' , fetchObject).then(response => response.json()).then(response => {
+        fetch(`https://fiit-autobazar-backend.herokuapp.com/api/autobazar/cars/${car._id}` , fetchObject).then(response => response.json()).then(response => {
             navigation.goBack()          
         })        
     }

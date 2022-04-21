@@ -32,7 +32,7 @@ const ProfileScreen = (props) => {
             for (var i = 0; i < userObj[0].own_advertisement.length; i++) {
                 let carId = userObj[0].own_advertisement[i]
                 
-                let carObj = await  fetch(`https://fiit-autobazar-backend.herokuapp.com/api/autobazar/cars/${carId}`).then(response => response.json())
+                let carObj = await fetch(`https://fiit-autobazar-backend.herokuapp.com/api/autobazar/cars/${carId}`).then(response => response.json())
                 
                 if (!carObj.errors) {
                     carObjects.push(carObj)
