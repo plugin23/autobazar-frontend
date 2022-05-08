@@ -13,6 +13,7 @@ const LoginScreen = (props) => {
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
     const [isLoading, setIsLoading] = useState(false)
+    
  
     const login = () => {
         if (email == "" || password == "") {
@@ -33,17 +34,26 @@ const LoginScreen = (props) => {
             headers: {
                 'Content-type': 'application/json'
             },
-            body: JSON.stringify(bodyObject)
+            body: bodyObject
+        }
+        
+        var ws = new WebSocket('ws://fiit-autobazar-backend.herokuapp.com/api/autobazar/users/login')
+
+        ws.onopen = () => {
+            ws.send(JSON.stringify(fetchObject))
         }
 
-        fetch('https://fiit-autobazar-backend.herokuapp.com/api/autobazar/users/login' , fetchObject).then(response => response.json()).then(response => {
+        ws.onmessage = (e) => {
+            const response = JSON.parse(e.data)
+            console.log(response)
             if (response.id) {
                 props.loggedIn(response.id)
+                ws.close()
             }
             else { //ak uzivatel zada zle heslo alebo meno
                 Alert.alert("Nesprávne údaje", "Údaje, ktoré ste zadali nie sú správne", [{ text: "OK", onPress: () => { } }])
             }
-        })        
+        }     
 
     }
     
