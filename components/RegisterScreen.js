@@ -33,10 +33,17 @@ const RegisterScreen = (props) => {
             headers: {
                 'Content-type': 'application/json'
             },
-            body: JSON.stringify(bodyObject)
+            body: bodyObject
         }
 
-        fetch('https://fiit-autobazar-backend.herokuapp.com/api/autobazar/users' , fetchObject).then(response => response.json()).then(response => {
+        let usersWs = new WebSocket('ws://fiit-autobazar-backend.herokuapp.com/api/autobazar/users')
+
+        usersWs.onopen = () => {
+            usersWs.send(JSON.stringify(fetchObject))
+        }
+
+        usersWs.onmessage = (e) => {
+            const response = JSON.parse(e.data)
             setIsLoading(false)
             if(response.errors) {
                 Alert.alert("Užívateľ existuje", "Používateľ s týmto emailom už existuje", [{text:"OK", onPress: () => {}}])
@@ -45,7 +52,19 @@ const RegisterScreen = (props) => {
                 Alert.alert("Úspešne zaregistrovaný", "Vaše konto bolo úspešne vytvorené, pokračujte prihlásením...")
                 props.showRegister()
             }
-        }) 
+            usersWs.close()
+        }
+
+        /*fetch('https://fiit-autobazar-backend.herokuapp.com/api/autobazar/users' , fetchObject).then(response => response.json()).then(response => {
+            setIsLoading(false)
+            if(response.errors) {
+                Alert.alert("Užívateľ existuje", "Používateľ s týmto emailom už existuje", [{text:"OK", onPress: () => {}}])
+            }
+            else { //ak je uspesna registracia
+                Alert.alert("Úspešne zaregistrovaný", "Vaše konto bolo úspešne vytvorené, pokračujte prihlásením...")
+                props.showRegister()
+            }
+        }) */
     }
 
     return (

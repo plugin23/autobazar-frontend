@@ -25,11 +25,30 @@ const CarsScreen = (props) => {
 
     const fetchCars = () => {
         setIsFetching(true)
+        let fetchObject = {
+            method: 'GET',
+            headers: {
+                'Content-type': 'application/json'
+            }
+        }
 
-        fetch('https://fiit-autobazar-backend.herokuapp.com/api/autobazar/cars' ).then(response => response.json()).then(response => {
+        let carsWs = new WebSocket('ws://fiit-autobazar-backend.herokuapp.com/api/autobazar/cars')
+
+        carsWs.onopen = () => {
+            carsWs.send(JSON.stringify(fetchObject))
+        }
+
+        carsWs.onmessage = (e) => {
+            let response = JSON.parse(e.data)
+            setCars(response)
+            setIsFetching(false) 
+            carsWs.close()
+        }
+        
+        /*fetch('https://fiit-autobazar-backend.herokuapp.com/api/autobazar/cars' ).then(response => response.json()).then(response => {
             setCars(response)
             setIsFetching(false)       
-        }) 
+        }) */
         
     }
 

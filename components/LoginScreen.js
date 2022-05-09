@@ -28,7 +28,6 @@ const LoginScreen = (props) => {
             password: password
         }
 
-
         const fetchObject = {
             method: 'POST',
             headers: {
@@ -37,7 +36,7 @@ const LoginScreen = (props) => {
             body: bodyObject
         }
         
-        var ws = new WebSocket('ws://fiit-autobazar-backend.herokuapp.com/api/autobazar/users/login')
+        let ws = new WebSocket('ws://fiit-autobazar-backend.herokuapp.com/api/autobazar/users/login')
 
         ws.onopen = () => {
             ws.send(JSON.stringify(fetchObject))

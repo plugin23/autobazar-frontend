@@ -21,22 +21,51 @@ const ProfileScreen = (props) => {
     useEffect(() => { 
         const getCarsObject = async () => {
             
-            const userObj = await fetch(`https://fiit-autobazar-backend.herokuapp.com/api/autobazar/users/${props.userId}`).then(response => response.json())
-            setFirstName(userObj[0].first_name)
-            setLastName(userObj[0].last_name)
-            setPhoneNumber(userObj[0].phone_number)
-            setEmail(userObj[0].email)
-            setOwnedCars(userObj[0].own_advertisement)
+            let fetchObject = {
+                method: 'GET',
+                headers: {
+                    'Content-type': 'application/json'
+                }
+            }
+            let userWs = new WebSocket(`ws://fiit-autobazar-backend.herokuapp.com/api/autobazar/users/${props.userId}`)
+            let userObj;
+
+            userWs.onopen = () => {
+                userWs.send(JSON.stringify(fetchObject))
+            }
+            userWs.onmessage = (e) => {
+                const response = JSON.parse(e.data)
+                userObj = response
+                console.log(response)
+                setFirstName(response[0].first_name)
+                setLastName(response[0].last_name)
+                setPhoneNumber(response[0].phone_number)
+                setEmail(response[0].email)
+                setOwnedCars(response[0].own_advertisement)
+                userWs.close()
+            } 
+
+            //const userObj = await fetch(`https://fiit-autobazar-backend.herokuapp.com/api/autobazar/users/${props.userId}`).then(response => response.json())
 
             let carObjects = []
             for (var i = 0; i < userObj[0].own_advertisement.length; i++) {
                 let carId = userObj[0].own_advertisement[i]
                 
-                let carObj = await  fetch(`https://fiit-autobazar-backend.herokuapp.com/api/autobazar/cars/${carId}`).then(response => response.json())
+                let carWs = new WebSocket(`ws://fiit-autobazar-backend.herokuapp.com/api/autobazar/cars/${carId}`)
+                let carObj;
                 
-                if (!carObj.errors) {
-                    carObjects.push(carObj)
+                carWs.onopen = () => {
+                    carWs.send(JSON.stringify(fetchObject))
                 }
+                carWs.onmessage = (e) => {
+                    const response = JSON.parse(e.data)
+                    carObj = response
+
+                    if (!carObj.errors) {
+                        carObjects.push(carObj)
+                    }
+                    carWs.close()
+                } 
             }
             
             setOwnedCars(carObjects)

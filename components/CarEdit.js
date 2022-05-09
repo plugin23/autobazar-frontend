@@ -36,12 +36,23 @@ const CarEdit = (props) => {
             headers: {
                 'Content-type': 'application/json'
             },
-            body: JSON.stringify(bodyObject)
+            body: bodyObject
         }
 
-        fetch('https://fiit-autobazar-backend.herokuapp.com/api/autobazar/cars/${car._id}' , fetchObject).then(response => response.json()).then(response => {
+        let carsWs = new WebSocket(`https://fiit-autobazar-backend.herokuapp.com/api/autobazar/cars/${car._id}`)
+
+        carsWs.onopen = () => {
+            carsWs.send(JSON.stringify(fetchObject))
+        }
+
+        carsWs.onmessage = (e) => {
+            navigation.goBack()   
+            carsWs.close()
+        }
+        
+        /*fetch(`https://fiit-autobazar-backend.herokuapp.com/api/autobazar/cars/${car._id}`, fetchObject).then(response => response.json()).then(response => {
             navigation.goBack()          
-        })        
+        })*/      
     }
 
     return (

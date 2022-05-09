@@ -17,19 +17,61 @@ const FavouritesScreen = (props) => {
     useEffect(() => { 
         const getCarsObject = async () => {
             setIsFetching(true)
+            
+            let fetchObject = {
+                method: 'GET',
+                headers: {
+                    'Content-type': 'application/json'
+                }
+            }
     
-            const userBookmarks = await fetch(`https://fiit-autobazar-backend.herokuapp.com/api/autobazar/users/${props.userId}` + '/favourites').then(response => response.json())
-            setBookmarks(userBookmarks)
+            let usersWs = new WebSocket(`ws://fiit-autobazar-backend.herokuapp.com/api/autobazar/users/${props.userId}` + '/favourites')
+    
+            usersWs.onopen = () => {
+                usersWs.send(JSON.stringify(fetchObject))
+            }
+
+            let userBookmarks;
+            usersWs.onmessage = (e) => {
+                let response = JSON.parse(e.data)
+                userBookmarks = response
+                setBookmarks(userBookmarks)
+            }
+
+            //const userBookmarks = await fetch(`https://fiit-autobazar-backend.herokuapp.com/api/autobazar/users/${props.userId}` + '/favourites').then(response => response.json())
+            //setBookmarks(userBookmarks)
 
             
             let carObjects = []
             for (var i = 0; i < userBookmarks.length; i++) {
                 let carId = userBookmarks[i]
-                let carObj = await fetch(`https://fiit-autobazar-backend.herokuapp.com/api/autobazar/cars/${carId}`).then(response => response.json())
+
+                let fetchObject = {
+                    method: 'GET',
+                    headers: {
+                        'Content-type': 'application/json'
+                    }
+                }
+
+                let carsWs = new WebSocket(`ws://fiit-autobazar-backend.herokuapp.com/api/autobazar/cars/${carId}`)
+
+                carsWs.onopen = () => {
+                    usersWs.send(JSON.stringify(fetchObject))
+                }
+                
+                carsWs.onmessage = (e) => {
+                    let response = JSON.parse(e.data)
+                    let carObj = response
+
+                    if (!carObj.errors) {
+                        carObjects.push(carObj)
+                    }
+                }
+                /*let carObj = await fetch(`https://fiit-autobazar-backend.herokuapp.com/api/autobazar/cars/${carId}`).then(response => response.json())
                 
                 if (!carObj.errors) {
                     carObjects.push(carObj)
-                }
+                }*/
             }
             
             setBookmarkCars(carObjects)

@@ -41,12 +41,32 @@ const SearchScreen = (props) => {
     const searchCars = () => {
         if (search != "") {
             setIsFetching(true)
+
+            let fetchObject = {
+                method: 'GET',
+                headers: {
+                    'Content-type': 'application/json'
+                }
+            }
+
+            let carsWs = new WebSocket(`ws://fiit-autobazar-backend.herokuapp.com/api/autobazar/cars/search/${search}`)
+
+            carsWs.onopen = () => {
+                carsWs.send(JSON.stringify(fetchObject))
+            }
+
+            carsWs.onmessage = (e) => {
+                let response = JSON.parse(e.data)
+                setCars(response)
+                setIsFetching(false)
+                setSearchDone(true)   
+            }
             
-            fetch(`https://fiit-autobazar-backend.herokuapp.com/api/autobazar/cars/search/${search}`).then(response => response.json()).then(response => {
+            /*fetch(`https://fiit-autobazar-backend.herokuapp.com/api/autobazar/cars/search/${search}`).then(response => response.json()).then(response => {
                 setCars(response)
                 setIsFetching(false)
                 setSearchDone(true)          
-            })    
+            }) */   
         }
     }
     

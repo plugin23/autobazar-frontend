@@ -60,10 +60,28 @@ const AddCarScreen = (props) => {
                 headers: {
                     'Content-type': 'application/json'
                 },
-                body: JSON.stringify(bodyObject)
+                body: bodyObject
             }
-    
-            fetch('https://fiit-autobazar-backend.herokuapp.com/api/autobazar/cars' , fetchObject).then(response => response.json()).then(response => {
+            let carsWs = new WebSocket('ws://fiit-autobazar-backend.herokuapp.com/api/autobazar/cars')
+
+            carsWs.onopen = () => {
+                carsWs.send(JSON.stringify(fetchObject))
+            }
+
+            carsWs.onmessage = (e) => {
+                let response = JSON.parse(e.data)
+                if (response._id) {
+                    //alert(result)                   
+                    setIsAdded(true)
+                    edit_user(response)
+                }
+                else { //ak uzivatel zada zle heslo alebo meno
+                    Alert.alert("Údaje, ktoré ste zadali nie sú správne", [{ text: "OK", onPress: () => { } }])
+                }
+                carsWs.close()
+            }
+
+            /*fetch('https://fiit-autobazar-backend.herokuapp.com/api/autobazar/cars' , fetchObject).then(response => response.json()).then(response => {
                 
                 if (response._id) {
                     //alert(result)                   
@@ -73,7 +91,7 @@ const AddCarScreen = (props) => {
                 else { //ak uzivatel zada zle heslo alebo meno
                     Alert.alert("Údaje, ktoré ste zadali nie sú správne", [{ text: "OK", onPress: () => { } }])
                 }
-            })        
+            }) */       
         }
     }, [url])
 
@@ -132,10 +150,16 @@ const AddCarScreen = (props) => {
             headers: {
                 'Content-type': 'application/json'
             },
-            body: JSON.stringify(bodyObjectUser)
+            body: bodyObjectUser
+        }
+        let usersWs = new WebSocket(`ws://fiit-autobazar-backend.herokuapp.com/api/autobazar/users/${result.author}/own_advertisement`)
+
+        usersWs.onopen = () => {
+            usersWs.send(JSON.parse(fetchObject))
         }
 
-        fetch(`https://fiit-autobazar-backend.herokuapp.com/api/autobazar/users/${result.author}/own_advertisement` , fetchObject).then(response => response.json()).then(response => {
+        usersWs.onmessage = (e) => {
+            let response = JSON.parse(e.data)
             if (response.id) {
                 //alert(result)
                 props.loggedIn(response.id)
@@ -143,7 +167,18 @@ const AddCarScreen = (props) => {
             else { //ak uzivatel zada zle heslo alebo meno
                 Alert.alert("Nesprávne údaje", "Údaje, ktoré ste zadali nie sú správne", [{ text: "OK", onPress: () => { } }])
             }
-        })
+            usersWs.close()
+        }
+        
+        /*fetch(`https://fiit-autobazar-backend.herokuapp.com/api/autobazar/users/${result.author}/own_advertisement` , fetchObject).then(response => response.json()).then(response => {
+            if (response.id) {
+                //alert(result)
+                props.loggedIn(response.id)
+            }
+            else { //ak uzivatel zada zle heslo alebo meno
+                Alert.alert("Nesprávne údaje", "Údaje, ktoré ste zadali nie sú správne", [{ text: "OK", onPress: () => { } }])
+            }
+        })*/
     }
 
     return (
