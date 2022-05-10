@@ -17,6 +17,20 @@ const ProfileScreen = (props) => {
     const [phoneNumber, setPhoneNumber] = useState("")
     const [email, setEmail] = useState("")
     const [ownedCars, setOwnedCars] = useState([])
+
+    const waitForSocketConnection = (socket, callback) => {
+        setTimeout(
+            function () {
+                if (socket.readyState === 1) {
+                    if (callback != null){
+                        callback();
+                    }
+                } else {
+                    waitForSocketConnection(socket, callback);
+                }
+    
+            }, 5); // wait 5 milisecond for the connection...
+    }
     
     useEffect(() => { 
         const getCarsObject = async () => {
@@ -30,20 +44,24 @@ const ProfileScreen = (props) => {
             let userWs = new WebSocket(`ws://fiit-autobazar-backend.herokuapp.com/api/autobazar/users/${props.userId}`)
             let userObj;
 
-            userWs.onopen = () => {
-                userWs.send(JSON.stringify(fetchObject))
+            usersWs.onopen = () => {
+                waitForSocketConnection(usersWs, function(){
+                    //console.log("message sent!!!");
+                    usersWs.send(JSON.stringify(fetchObject))
+                });
+    
+                userWs.onmessage = (e) => {
+                    const response = JSON.parse(e.data)
+                    userObj = response
+                    console.log(response)
+                    setFirstName(response[0].first_name)
+                    setLastName(response[0].last_name)
+                    setPhoneNumber(response[0].phone_number)
+                    setEmail(response[0].email)
+                    setOwnedCars(response[0].own_advertisement)
+                    userWs.close()
+                }
             }
-            userWs.onmessage = (e) => {
-                const response = JSON.parse(e.data)
-                userObj = response
-                console.log(response)
-                setFirstName(response[0].first_name)
-                setLastName(response[0].last_name)
-                setPhoneNumber(response[0].phone_number)
-                setEmail(response[0].email)
-                setOwnedCars(response[0].own_advertisement)
-                userWs.close()
-            } 
 
             //const userObj = await fetch(`https://fiit-autobazar-backend.herokuapp.com/api/autobazar/users/${props.userId}`).then(response => response.json())
 
@@ -54,18 +72,23 @@ const ProfileScreen = (props) => {
                 let carWs = new WebSocket(`ws://fiit-autobazar-backend.herokuapp.com/api/autobazar/cars/${carId}`)
                 let carObj;
                 
-                carWs.onopen = () => {
-                    carWs.send(JSON.stringify(fetchObject))
-                }
-                carWs.onmessage = (e) => {
-                    const response = JSON.parse(e.data)
-                    carObj = response
-
-                    if (!carObj.errors) {
-                        carObjects.push(carObj)
+                carsWs.onopen = () => {
+                    waitForSocketConnection(carsWs, function(){
+                        console.log("message sent!!!");
+                        carsWs.send(JSON.stringify(fetchObject))
+                    });
+        
+                    carWs.onmessage = (e) => {
+                        const response = JSON.parse(e.data)
+                        carObj = response
+    
+                        if (!carObj.errors) {
+                            carObjects.push(carObj)
+                        }
+                        carWs.close()
                     }
-                    carWs.close()
-                } 
+                }
+
             }
             
             setOwnedCars(carObjects)

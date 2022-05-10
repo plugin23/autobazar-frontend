@@ -14,6 +14,20 @@ const FavouritesScreen = (props) => {
     const [bookmarkCars, setBookmarkCars] = useState([])
     const isFocused = useIsFocused();
 
+    const waitForSocketConnection = (socket, callback) => {
+        setTimeout(
+            function () {
+                if (socket.readyState === 1) {
+                    if (callback != null){
+                        callback();
+                    }
+                } else {
+                    waitForSocketConnection(socket, callback);
+                }
+    
+            }, 5); // wait 5 milisecond for the connection...
+    }
+
     useEffect(() => { 
         const getCarsObject = async () => {
             setIsFetching(true)
@@ -26,17 +40,22 @@ const FavouritesScreen = (props) => {
             }
     
             let usersWs = new WebSocket(`ws://fiit-autobazar-backend.herokuapp.com/api/autobazar/users/${props.userId}` + '/favourites')
-    
-            usersWs.onopen = () => {
-                usersWs.send(JSON.stringify(fetchObject))
-            }
 
             let userBookmarks;
-            usersWs.onmessage = (e) => {
-                let response = JSON.parse(e.data)
-                userBookmarks = response
-                setBookmarks(userBookmarks)
+
+            usersWs.onopen = () => {
+                waitForSocketConnection(usersWs, function(){
+                    //console.log("message sent!!!");
+                    usersWs.send(JSON.stringify(fetchObject))
+                });
+    
+                usersWs.onmessage = (e) => {
+                    let response = JSON.parse(e.data)
+                    userBookmarks = response
+                    setBookmarks(userBookmarks)
+                }
             }
+    
 
             //const userBookmarks = await fetch(`https://fiit-autobazar-backend.herokuapp.com/api/autobazar/users/${props.userId}` + '/favourites').then(response => response.json())
             //setBookmarks(userBookmarks)
@@ -56,17 +75,21 @@ const FavouritesScreen = (props) => {
                 let carsWs = new WebSocket(`ws://fiit-autobazar-backend.herokuapp.com/api/autobazar/cars/${carId}`)
 
                 carsWs.onopen = () => {
-                    usersWs.send(JSON.stringify(fetchObject))
-                }
-                
-                carsWs.onmessage = (e) => {
-                    let response = JSON.parse(e.data)
-                    let carObj = response
-
-                    if (!carObj.errors) {
-                        carObjects.push(carObj)
+                    waitForSocketConnection(carsWs, function(){
+                        console.log("message sent!!!");
+                        carsWs.send(JSON.stringify(fetchObject))
+                    });
+        
+                    carsWs.onmessage = (e) => {
+                        let response = JSON.parse(e.data)
+                        let carObj = response
+    
+                        if (!carObj.errors) {
+                            carObjects.push(carObj)
+                        }
                     }
                 }
+                
                 /*let carObj = await fetch(`https://fiit-autobazar-backend.herokuapp.com/api/autobazar/cars/${carId}`).then(response => response.json())
                 
                 if (!carObj.errors) {

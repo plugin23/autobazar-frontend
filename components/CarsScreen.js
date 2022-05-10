@@ -14,10 +14,6 @@ const CarsScreen = (props) => {
     const [cars, setCars] = useState([])
     const [isFetching, setIsFetching] = useState(true)
     const isFocused = useIsFocused();
-    
-    useEffect(() => { 
-        fetchCars()
-    }, [])
 
     useEffect(() => {
         isFocused && fetchCars()
@@ -33,18 +29,18 @@ const CarsScreen = (props) => {
         }
 
         let carsWs = new WebSocket('ws://fiit-autobazar-backend.herokuapp.com/api/autobazar/cars')
-
+        
         carsWs.onopen = () => {
             carsWs.send(JSON.stringify(fetchObject))
         }
 
-        carsWs.onmessage = (e) => {
-            let response = JSON.parse(e.data)
+        carsWs.onmessage = async (e) => {
+            const response = JSON.parse(e.data)
             setCars(response)
             setIsFetching(false) 
             carsWs.close()
         }
-        
+
         /*fetch('https://fiit-autobazar-backend.herokuapp.com/api/autobazar/cars' ).then(response => response.json()).then(response => {
             setCars(response)
             setIsFetching(false)       

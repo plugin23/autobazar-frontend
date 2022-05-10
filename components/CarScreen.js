@@ -26,8 +26,23 @@ const CarScreen = (props) => {
         isFocused && getCar()
     }, [isFocused])
 
-    const getUser = () => {
+    // Make the function wait until the connection is made...
+    const waitForSocketConnection = (socket, callback) => {
+        setTimeout(
+            function () {
+                if (socket.readyState === 1) {
+                    if (callback != null){
+                        callback();
+                    }
+                } else {
+                    waitForSocketConnection(socket, callback);
+                }
+    
+            }, 5); // wait 5 milisecond for the connection...
+    }
 
+    const getUser = () => {
+        
         let fetchObject = {
             method: 'GET',
             headers: {
@@ -36,20 +51,27 @@ const CarScreen = (props) => {
         }
 
         let usersWs = new WebSocket(`ws://fiit-autobazar-backend.herokuapp.com/api/autobazar/users/${props.route.params.car.author}`)
-
+        
         usersWs.onopen = () => {
-            usersWs.send(JSON.stringify(fetchObject))
+            waitForSocketConnection(usersWs, function(){
+                //console.log("message sent!!!");
+                usersWs.send(JSON.stringify(fetchObject))
+            });
+
+            usersWs.onmessage = (e) => {
+                let response = JSON.parse(e.data)
+                //console.log(response)
+                setFirstName(response[0].first_name)
+                setLastName(response[0].last_name)
+                setPhoneNumber(response[0].phone_number)
+                setEmail(response[0].email)
+                setIsFetchingUser(false)
+                usersWs.close()
+            }
         }
 
-        usersWs.onmessage = (e) => {
-            let response = JSON.parse(e.data)
-            setFirstName(response[0].first_name)
-            setLastName(response[0].last_name)
-            setPhoneNumber(response[0].phone_number)
-            setEmail(response[0].email)
-            setIsFetchingUser(false)
-            usersWs.close()
-        }
+        
+        
         /*fetch(`https://fiit-autobazar-backend.herokuapp.com/api/autobazar/users/${props.route.params.car.author}`).then(response => response.json()).then(response => {
            
             setFirstName(response[0].first_name)
@@ -59,18 +81,25 @@ const CarScreen = (props) => {
             setIsFetchingUser(false)
         })*/
 
-        usersWs = new WebSocket(`ws://fiit-autobazar-backend.herokuapp.com/api/autobazar/users/${props.route.params.userId}`)
+        let usersFavWs = new WebSocket(`ws://fiit-autobazar-backend.herokuapp.com/api/autobazar/users/${props.route.params.userId}`)
 
-        usersWs.onopen = () => {
-            usersWs.send(JSON.stringify(fetchObject))
+
+        usersFavWs.onopen = () => {
+            waitForSocketConnection(usersFavWs, function(){
+                console.log("message sent!!!");
+                usersFavWs.send(JSON.stringify(fetchObject))
+            });
+
+            usersFavWs.onmessage = (e) => {
+                let response = JSON.parse(e.data)
+                console.log(response)
+                setBookmarks(response[0].favourites)
+                setIsBookmarked(response[0].favourites.includes(car._id))
+                usersFavWs.close()
+            }
         }
 
-        usersWs.onmessage = (e) => {
-            let response = JSON.parse(e.data)
-            setBookmarks(response[0].favourites)
-            setIsBookmarked(response[0].favourites.includes(car._id))
-            usersWs.close()
-        }
+        
 
         /*fetch(`https://fiit-autobazar-backend.herokuapp.com/api/autobazar/users/${props.route.params.userId}`).then(response => response.json()).then(response => {
             setBookmarks(response[0].favourites)
@@ -78,30 +107,35 @@ const CarScreen = (props) => {
         })*/
     }
 
-    const getCar = () => {       
+    const getCar = () => {     
         let fetchObject = {
             method: 'GET',
             headers: {
                 'Content-type': 'application/json'
             }
         }
+        
 
-        let carsWs = new WebSocket(`ws://fiit-autobazar-backend.herokuapp.com/api/autobazar/users/${props.route.params.car.author}`)
+        let carsWs = new WebSocket(`ws://fiit-autobazar-backend.herokuapp.com/api/autobazar/cars/${car._id}`)
 
         carsWs.onopen = () => {
-            carsWs.send(JSON.stringify(fetchObject))
+            waitForSocketConnection(carsWs, function(){
+                console.log("message sent!!!");
+                carsWs.send(JSON.stringify(fetchObject))
+            });
+
+            carsWs.onmessage = (e) => {
+                console.log(e)
+                let response = JSON.parse(e.data)
+                setCar(response)
+                carsWs.close()
+            }
         }
 
-        carsWs.onmessage = (e) => {
-            let response = JSON.parse(e.data)
-            setCar(response)
-            carsWs.close()
-        }
 
         /*fetch(`https://fiit-autobazar-backend.herokuapp.com/api/autobazar/cars/${car._id}`).then(response => response.json()).then(response => {
             setCar(response)
         })*/
-        
     }
 
     const carDelete = () => {
@@ -118,14 +152,17 @@ const CarScreen = (props) => {
                 let carsWs = new WebSocket(`ws://fiit-autobazar-backend.herokuapp.com/api/autobazar/cars/${car._id}`)
 
                 carsWs.onopen = () => {
-                    carsWs.send(JSON.stringify(fetchObject))
-                }
-
-                carsWs.onmessage = (e) => {
-                    let response = JSON.parse(e.data)
-                    Alert.alert("Inzerát bol úspešne vymazaný")
-                    navigation.goBack()  
-                    carsWs.close()
+                    waitForSocketConnection(carsWs, function(){
+                        console.log("message sent!!!");
+                        carsWs.send(JSON.stringify(fetchObject))
+                    });
+        
+                    carsWs.onmessage = (e) => {
+                        let response = JSON.parse(e.data)
+                        Alert.alert("Inzerát bol úspešne vymazaný")
+                        navigation.goBack()  
+                        carsWs.close()
+                    }
                 }
 
                 /*fetch(`https://fiit-autobazar-backend.herokuapp.com/api/autobazar/cars/${car._id}` , fetchObject).then(response => response.json()).then(response => {
@@ -154,15 +191,18 @@ const CarScreen = (props) => {
             body: bookmarkObject
         }
         
-        usersWs = new WebSocket(`ws://fiit-autobazar-backend.herokuapp.com/api/autobazar/users/${props.route.params.userId}`)
+        let usersWs = new WebSocket(`ws://fiit-autobazar-backend.herokuapp.com/api/autobazar/users/${props.route.params.userId}`)
 
         usersWs.onopen = () => {
-            usersWs.send(JSON.stringify(fetchObject))
-        }
+            waitForSocketConnection(usersWs, function(){
+                //console.log("message sent!!!");
+                usersWs.send(JSON.stringify(fetchObject))
+            });
 
-        usersWs.onmessage = (e) => {
-            setIsBookmarked(true)
-            usersWs.close()
+            usersWs.onmessage = (e) => {
+                setIsBookmarked(true)
+                usersWs.close()
+            }
         }
 
         /*fetch(`https://fiit-autobazar-backend.herokuapp.com/api/autobazar/users/${props.route.params.userId}` , fetchObject).then(response => response.json()).then(response => {
@@ -191,15 +231,18 @@ const CarScreen = (props) => {
             body: bookmarkObject
         }
 
-        usersWs = new WebSocket(`ws://fiit-autobazar-backend.herokuapp.com/api/autobazar/users/${props.route.params.userId}`)
+        let usersWs = new WebSocket(`ws://fiit-autobazar-backend.herokuapp.com/api/autobazar/users/${props.route.params.userId}`)
 
         usersWs.onopen = () => {
-            usersWs.send(JSON.stringify(fetchObject))
-        }
+            waitForSocketConnection(usersWs, function(){
+                //console.log("message sent!!!");
+                usersWs.send(JSON.stringify(fetchObject))
+            });
 
-        usersWs.onmessage = (e) => {
-            setIsBookmarked(false)
-            usersWs.close()
+            usersWs.onmessage = (e) => {
+                setIsBookmarked(false)
+                usersWs.close()
+            }
         }
         
         /*fetch(`https://fiit-autobazar-backend.herokuapp.com/api/autobazar/users/${props.route.params.userId}` , fetchObject).then(response => response.json()).then(response => {

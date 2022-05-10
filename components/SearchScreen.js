@@ -60,6 +60,7 @@ const SearchScreen = (props) => {
                 setCars(response)
                 setIsFetching(false)
                 setSearchDone(true)   
+                carsWs.close()
             }
             
             /*fetch(`https://fiit-autobazar-backend.herokuapp.com/api/autobazar/cars/search/${search}`).then(response => response.json()).then(response => {
