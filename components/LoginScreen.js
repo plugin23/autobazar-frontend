@@ -44,7 +44,6 @@ const LoginScreen = (props) => {
 
         ws.onmessage = (e) => {
             const response = JSON.parse(e.data)
-            console.log(response)
             if (response.id) {
                 props.loggedIn(response.id)
                 ws.close()

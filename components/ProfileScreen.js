@@ -17,6 +17,94 @@ const ProfileScreen = (props) => {
     const [phoneNumber, setPhoneNumber] = useState("")
     const [email, setEmail] = useState("")
     const [ownedCars, setOwnedCars] = useState([])
+    
+    useEffect(() => { 
+        const getCarsObject = async () => {
+            
+            let fetchObject = {
+                method: 'GET',
+                headers: {
+                    'Content-type': 'application/json'
+                }
+            }
+            let userWs = new WebSocket(`ws://fiit-autobazar-backend.herokuapp.com/api/autobazar/users/${props.userId}`)
+            //let userObj;
+
+            let carObjects = []
+            let carSockets = []
+            let response;
+
+            userWs.onopen = () => {
+                waitForSocketConnection(userWs, function(){
+                    console.log("profile user req sent!!!");
+                    userWs.send(JSON.stringify(fetchObject))
+                });
+    
+                userWs.onmessage = async (e) => {
+                    
+                    response = JSON.parse(e.data)
+                    //userObj = response   
+                    
+                    for (var i = 0; i < response[0].own_advertisement.length; i++) {
+                        
+                        let carId = response[0].own_advertisement[i]
+                        carSockets[i] = new WebSocket(`ws://fiit-autobazar-backend.herokuapp.com/api/autobazar/cars/${carId}`)
+                        
+                        //let carWs = new WebSocket(`ws://fiit-autobazar-backend.herokuapp.com/api/autobazar/cars/${carId}`)
+                        //let carObj;
+                        let carWs = await carSockets[i]
+                        carWs.onopen = () => {
+                            waitForSocketConnection(carWs, function(){
+                                console.log("profile cars req send!!!");
+                                carWs.send(JSON.stringify(fetchObject))
+                            });
+                        }
+
+                        carWs.onmessage = (e) => {
+                            const carResponse = JSON.parse(e.data)
+                            //console.log(carResponse)
+                            //carObj = response
+        
+                            if (!carResponse.errors) {
+                                carObjects.push(carResponse)
+                                
+                            }
+                            
+                            if (carObjects.length == response[0].own_advertisement.length) {
+                                setFirstName(response[0].first_name)
+                                setLastName(response[0].last_name)
+                                setPhoneNumber(response[0].phone_number)
+                                setEmail(response[0].email)
+                                setOwnedCars(response[0].own_advertisement)
+                                setOwnedCars(carObjects)
+                                userWs.close()
+                            }
+
+                            carWs.close()
+                        }
+
+                    }
+                    
+                }
+            }
+
+            //const userObj = await fetch(`https://fiit-autobazar-backend.herokuapp.com/api/autobazar/users/${props.userId}`).then(response => response.json())
+
+            
+        }
+        
+        isFetching && getCarsObject()
+    }, [isFetching])
+
+    useEffect(() => {
+        console.log(ownedCars.length)
+        if (ownedCars.length) {
+            console.log(ownedCars)
+            setIsFetchingUser(false)
+            setIsFetching(false)
+        }
+    }, [ownedCars])
+
 
     const waitForSocketConnection = (socket, callback) => {
         setTimeout(
@@ -31,77 +119,8 @@ const ProfileScreen = (props) => {
     
             }, 5); // wait 5 milisecond for the connection...
     }
+
     
-    useEffect(() => { 
-        const getCarsObject = async () => {
-            
-            let fetchObject = {
-                method: 'GET',
-                headers: {
-                    'Content-type': 'application/json'
-                }
-            }
-            let userWs = new WebSocket(`ws://fiit-autobazar-backend.herokuapp.com/api/autobazar/users/${props.userId}`)
-            let userObj;
-
-            usersWs.onopen = () => {
-                waitForSocketConnection(usersWs, function(){
-                    //console.log("message sent!!!");
-                    usersWs.send(JSON.stringify(fetchObject))
-                });
-    
-                userWs.onmessage = (e) => {
-                    const response = JSON.parse(e.data)
-                    userObj = response
-                    console.log(response)
-                    setFirstName(response[0].first_name)
-                    setLastName(response[0].last_name)
-                    setPhoneNumber(response[0].phone_number)
-                    setEmail(response[0].email)
-                    setOwnedCars(response[0].own_advertisement)
-                    userWs.close()
-                }
-            }
-
-            //const userObj = await fetch(`https://fiit-autobazar-backend.herokuapp.com/api/autobazar/users/${props.userId}`).then(response => response.json())
-
-            let carObjects = []
-            for (var i = 0; i < userObj[0].own_advertisement.length; i++) {
-                let carId = userObj[0].own_advertisement[i]
-                
-                let carWs = new WebSocket(`ws://fiit-autobazar-backend.herokuapp.com/api/autobazar/cars/${carId}`)
-                let carObj;
-                
-                carsWs.onopen = () => {
-                    waitForSocketConnection(carsWs, function(){
-                        console.log("message sent!!!");
-                        carsWs.send(JSON.stringify(fetchObject))
-                    });
-        
-                    carWs.onmessage = (e) => {
-                        const response = JSON.parse(e.data)
-                        carObj = response
-    
-                        if (!carObj.errors) {
-                            carObjects.push(carObj)
-                        }
-                        carWs.close()
-                    }
-                }
-
-            }
-            
-            setOwnedCars(carObjects)
-        }
-
-        isFetching && getCarsObject().then(() => {
-            setIsFetchingUser(false)
-            setIsFetching(false)
-        })
-        
-    }, [isFetching])
-
-
     const onRefresh = () => {
         setIsFetching(true)
         setIsFetchingUser(true)
@@ -150,7 +169,7 @@ const ProfileScreen = (props) => {
                         <FlatList
                             data={ownedCars}
                             renderItem={item => renderItem(item)}
-                            keyExtractor={item => item._id.toString()}
+                            keyExtractor={item => item._id}
                             ItemSeparatorComponent={itemSeparator}
                             ListHeaderComponent={renderHeader}
                             showsVerticalScrollIndicator={false}
