@@ -159,6 +159,7 @@ const CarScreen = (props) => {
         
                     carsWs.onmessage = (e) => {
                         let response = JSON.parse(e.data)
+                        console.log(response)
                         Alert.alert("Inzerát bol úspešne vymazaný")
                         navigation.goBack()  
                         carsWs.close()

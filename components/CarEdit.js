@@ -39,13 +39,14 @@ const CarEdit = (props) => {
             body: bodyObject
         }
 
-        let carsWs = new WebSocket(`https://fiit-autobazar-backend.herokuapp.com/api/autobazar/cars/${car._id}`)
+        let carsWs = new WebSocket(`ws://fiit-autobazar-backend.herokuapp.com/api/autobazar/cars/${car._id}`)
 
         carsWs.onopen = () => {
             carsWs.send(JSON.stringify(fetchObject))
         }
 
         carsWs.onmessage = (e) => {
+            Alert.alert("Inzerát bol úspešne upravený")
             navigation.goBack()   
             carsWs.close()
         }
