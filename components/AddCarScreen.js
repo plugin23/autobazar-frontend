@@ -69,14 +69,17 @@ const AddCarScreen = (props) => {
             }
 
             carsWs.onmessage = (e) => {
+                console.log("som tu")
+                console.log(e.data)
                 let response = JSON.parse(e.data)
                 if (response._id) {
                     //alert(result)                   
                     setIsAdded(true)
                     edit_user(response)
+                    console.log(response)
                 }
                 else { //ak uzivatel zada zle heslo alebo meno
-                    Alert.alert("Údaje, ktoré ste zadali nie sú správne", [{ text: "OK", onPress: () => { } }])
+                    alert("Údaje, ktoré ste zadali nie sú správne", [{ text: "OK", onPress: () => { } }])
                 }
                 carsWs.close()
             }
@@ -155,7 +158,7 @@ const AddCarScreen = (props) => {
         let usersWs = new WebSocket(`ws://fiit-autobazar-backend.herokuapp.com/api/autobazar/users/${result.author}/own_advertisement`)
 
         usersWs.onopen = () => {
-            usersWs.send(JSON.parse(fetchObject))
+            usersWs.send(JSON.stringify(fetchObject))
         }
 
         usersWs.onmessage = (e) => {
