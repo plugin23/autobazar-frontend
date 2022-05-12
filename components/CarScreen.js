@@ -139,6 +139,7 @@ const CarScreen = (props) => {
     }
 
     const carDelete = () => {
+        //alert("som")
         Alert.alert("Zmazať inzerát", "Ste si istý že chcete vymazať váš inzerát?", [{
             text: "Áno", onPress: () => {                
                 const fetchObject = {

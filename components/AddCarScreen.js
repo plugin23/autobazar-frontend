@@ -69,17 +69,23 @@ const AddCarScreen = (props) => {
             }
 
             carsWs.onmessage = (e) => {
-                console.log("som tu")
-                console.log(e.data)
-                let response = JSON.parse(e.data)
-                if (response._id) {
-                    //alert(result)                   
-                    setIsAdded(true)
-                    edit_user(response)
-                    console.log(response)
+                try{
+                    if(!JSON.parse(e.data).errors){
+                        let response = JSON.parse(e.data)
+                        if (response._id) {
+                            //alert(result)                   
+                            setIsAdded(true)
+                            edit_user(response)
+                            console.log(response)
+                        }
+                    }
+                    else{
+                        Alert.alert("Zle zadané typy inputov")
+                    }
+                   
                 }
-                else { //ak uzivatel zada zle heslo alebo meno
-                    alert("Údaje, ktoré ste zadali nie sú správne", [{ text: "OK", onPress: () => { } }])
+                catch(r){
+                    Alert.alert('Error:', r.message)
                 }
                 carsWs.close()
             }
@@ -100,7 +106,7 @@ const AddCarScreen = (props) => {
 
     const addCar = async () => {
         if (carBrand == "" || engineCap == "" || year == "" || mileage == "" || price == "" || doors == "" || description == "" || body == "" || carModel == "") {
-            Alert.alert("Prosím vyplňte všetky polia", [{ text: "OK", onPress: () => { } }])
+            alert("Prosím vyplňte všetky polia", [{ text: "OK", onPress: () => { } }])
             return
         }
 
