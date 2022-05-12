@@ -107,6 +107,7 @@ const CarScreen = (props) => {
         })*/
     }
 
+<<<<<<< HEAD
     const getCar = () => {     
         let fetchObject = {
             method: 'GET',
@@ -114,6 +115,13 @@ const CarScreen = (props) => {
                 'Content-type': 'application/json'
             }
         }
+=======
+    const getCar = () => {       
+
+        fetch(`https://fiit-autobazar-backend.herokuapp.com/api/autobazar/cars/${car._id}`).then(response => response.json()).then(response => {
+            setCar(response)
+        })
+>>>>>>> 3dfe0e65eaa104550e0a796b8b11cfc0af352c03
         
 
         let carsWs = new WebSocket(`ws://fiit-autobazar-backend.herokuapp.com/api/autobazar/cars/${car._id}`)
@@ -149,6 +157,7 @@ const CarScreen = (props) => {
                     },
                     body: {}
                 }        
+<<<<<<< HEAD
 
                 let carsWs = new WebSocket(`ws://fiit-autobazar-backend.herokuapp.com/api/autobazar/cars/${car._id}`)
 
@@ -168,6 +177,9 @@ const CarScreen = (props) => {
                 }
 
                 /*fetch(`https://fiit-autobazar-backend.herokuapp.com/api/autobazar/cars/${car._id}` , fetchObject).then(response => response.json()).then(response => {
+=======
+                fetch(`https://fiit-autobazar-backend.herokuapp.com/api/autobazar/cars/${car._id}` , fetchObject).then(response => response.json()).then(response => {
+>>>>>>> 3dfe0e65eaa104550e0a796b8b11cfc0af352c03
                     Alert.alert("Inzerát bol úspešne vymazaný")
                     navigation.goBack()   
                 }) */

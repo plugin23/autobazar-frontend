@@ -21,10 +21,28 @@ const ProfileScreen = (props) => {
     useEffect(() => { 
         const getCarsObject = async () => {
             
+<<<<<<< HEAD
             let fetchObject = {
                 method: 'GET',
                 headers: {
                     'Content-type': 'application/json'
+=======
+            const userObj = await fetch(`https://fiit-autobazar-backend.herokuapp.com/api/autobazar/users/${props.userId}`).then(response => response.json())
+            setFirstName(userObj[0].first_name)
+            setLastName(userObj[0].last_name)
+            setPhoneNumber(userObj[0].phone_number)
+            setEmail(userObj[0].email)
+            setOwnedCars(userObj[0].own_advertisement)
+
+            let carObjects = []
+            for (var i = 0; i < userObj[0].own_advertisement.length; i++) {
+                let carId = userObj[0].own_advertisement[i]
+                
+                let carObj = await fetch(`https://fiit-autobazar-backend.herokuapp.com/api/autobazar/cars/${carId}`).then(response => response.json())
+                
+                if (!carObj.errors) {
+                    carObjects.push(carObj)
+>>>>>>> 3dfe0e65eaa104550e0a796b8b11cfc0af352c03
                 }
             }
             let userWs = new WebSocket(`ws://fiit-autobazar-backend.herokuapp.com/api/autobazar/users/${props.userId}`)

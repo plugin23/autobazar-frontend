@@ -49,7 +49,7 @@ const LoginScreen = (props) => {
                 ws.close()
             }
             else { //ak uzivatel zada zle heslo alebo meno
-                Alert.alert("Nesprávne údaje", "Údaje, ktoré ste zadali nie sú správne", [{ text: "OK", onPress: () => { } }])
+                Alert.alert("Nesprávne údaje", "Údaje, ktoré ste zadali nie sú správne", [{ text: "OK", onPress: () => { setIsLoading(false )} }])
             }
         }     
 

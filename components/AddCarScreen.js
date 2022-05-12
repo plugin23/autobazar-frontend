@@ -94,8 +94,7 @@ const AddCarScreen = (props) => {
                 
                 if (response._id) {
                     //alert(result)                   
-                    setIsAdded(true)
-                    edit_user(response)
+                    editUser(response)
                 }
                 else { //ak uzivatel zada zle heslo alebo meno
                     Alert.alert("Údaje, ktoré ste zadali nie sú správne", [{ text: "OK", onPress: () => { } }])
@@ -147,13 +146,18 @@ const AddCarScreen = (props) => {
     }
 
 
-    const edit_user = (result) => {
+    const editUser = async (result) => {
 
+        let advertisements = []
+        const userObj = await fetch(`https://fiit-autobazar-backend.herokuapp.com/api/autobazar/users/${props.userId}`).then(response => response.json())
+
+        advertisements = userObj[0].own_advertisement
+        advertisements.push(result._id)
+        
         const bodyObjectUser = {
-            own_advertisement: result._id 
+            own_advertisement: advertisements 
         }
            
-
         const fetchObject = {
             method: 'PUT',
             headers: {
@@ -167,6 +171,7 @@ const AddCarScreen = (props) => {
             usersWs.send(JSON.stringify(fetchObject))
         }
 
+<<<<<<< HEAD
         usersWs.onmessage = (e) => {
             let response = JSON.parse(e.data)
             if (response.id) {
@@ -188,6 +193,12 @@ const AddCarScreen = (props) => {
                 Alert.alert("Nesprávne údaje", "Údaje, ktoré ste zadali nie sú správne", [{ text: "OK", onPress: () => { } }])
             }
         })*/
+=======
+        fetch(`https://fiit-autobazar-backend.herokuapp.com/api/autobazar/users/${result.author}/own_advertisement`, fetchObject).then(response => response.json()).then(response => {
+            setIsAdded(true)
+        })
+ 
+>>>>>>> 3dfe0e65eaa104550e0a796b8b11cfc0af352c03
     }
 
     return (
