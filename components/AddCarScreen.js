@@ -89,7 +89,17 @@ const AddCarScreen = (props) => {
                 }
                 carsWs.close()
             }
-     
+
+            /*fetch('https://fiit-autobazar-backend.herokuapp.com/api/autobazar/cars' , fetchObject).then(response => response.json()).then(response => {
+                
+                if (response._id) {
+                    //alert(result)                   
+                    editUser(response)
+                }
+                else { //ak uzivatel zada zle heslo alebo meno
+                    Alert.alert("Údaje, ktoré ste zadali nie sú správne", [{ text: "OK", onPress: () => { } }])
+                }
+            }) */       
         }
     }, [url])
 
@@ -188,6 +198,15 @@ const AddCarScreen = (props) => {
             usersWs.close()
         }
         
+        /*fetch(`https://fiit-autobazar-backend.herokuapp.com/api/autobazar/users/${result.author}/own_advertisement` , fetchObject).then(response => response.json()).then(response => {
+            if (response.id) {
+                //alert(result)
+                props.loggedIn(response.id)
+            }
+            else { //ak uzivatel zada zle heslo alebo meno
+                Alert.alert("Nesprávne údaje", "Údaje, ktoré ste zadali nie sú správne", [{ text: "OK", onPress: () => { } }])
+            }
+        })*/
     }
 
     return (
