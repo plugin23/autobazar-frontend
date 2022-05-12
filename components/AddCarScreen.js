@@ -105,12 +105,18 @@ const AddCarScreen = (props) => {
 
     const addCar = async () => {
         if (carBrand == "" || engineCap == "" || year == "" || mileage == "" || price == "" || doors == "" || description == "" || body == "" || carModel == "") {
-            alert("Prosím vyplňte všetky polia", [{ text: "OK", onPress: () => { } }])
+            Alert.alert("Prosím vyplňte všetky polia", [{ text: "OK", onPress: () => { } }])
             return
         }
 
         let url = await uploadImageAsync(selectedImage)
-        setUrl(url)
+        if (url == null) {
+            Alert.alert("Prosím nahrajte fotku",  [{ text: "OK", onPress: () => { } }])
+        }
+        else {
+            setUrl(url)
+        }
+        
     }
 
     //https://docs.expo.dev/tutorial/image-picker/
@@ -128,6 +134,10 @@ const AddCarScreen = (props) => {
     //https://github.com/expo/firebase-storage-upload-example/blob/master/App.js
     //https://firebase.google.com/docs/storage/web/download-files#web-version-8_1
     const uploadImageAsync = async (uri) => {
+
+        if (uri == null) {
+            return null
+        }
         const storage = firebase.storage().ref();
 
         let filename = uri.substring(uri.lastIndexOf('/') + 1, uri.length)
@@ -216,23 +226,23 @@ const AddCarScreen = (props) => {
             (
                 <KeyboardAwareScrollView contentContainerStyle={styles.container} resetScrollToCoords={{ x: 0, y: 0 }} style={{ height: Dimensions.get("window").height }} automaticallyAdjustContentInsets={false}>
                     <Text style={styles.logo}>Pridať inzerát</Text>
-                    <TextInput style={styles.inputText} placeholder="Značka" onChangeText={(text) => setCarBrand(text)} />
+                    <TextInput style={styles.inputText} placeholderTextColor="black" placeholder="Značka" onChangeText={(text) => setCarBrand(text)} />
                     <View style={styles.separator} />
-                    <TextInput style={styles.inputText} placeholder="Model" onChangeText={(text) => setCarModel(text)} />
+                    <TextInput style={styles.inputText} placeholderTextColor="black" placeholder="Model" onChangeText={(text) => setCarModel(text)} />
                     <View style={styles.separator} />
-                    <TextInput style={styles.inputText} placeholder="Výkon" onChangeText={(text) => setEngineCap(text)} />
+                    <TextInput style={styles.inputText} placeholderTextColor="black" placeholder="Výkon" onChangeText={(text) => setEngineCap(text)} />
                     <View style={styles.separator} />
-                    <TextInput style={styles.inputText} placeholder="Rok výroby" onChangeText={(text) => setYear(text)} />
+                    <TextInput style={styles.inputText} placeholderTextColor="black" placeholder="Rok výroby" onChangeText={(text) => setYear(text)} />
                     <View style={styles.separator} />
-                    <TextInput style={styles.inputText} placeholder="Počet  najazdenýchkilometrov" onChangeText={(text) => setMileage(text)} />
+                    <TextInput style={styles.inputText} placeholderTextColor="black" placeholder="Počet najazdených kilometrov" onChangeText={(text) => setMileage(text)} />
                     <View style={styles.separator} />
-                    <TextInput style={styles.inputText} placeholder="Počet dverí" onChangeText={(text) => setDoors(text)} />
+                    <TextInput style={styles.inputText} placeholderTextColor="black" placeholder="Počet dverí" onChangeText={(text) => setDoors(text)} />
                     <View style={styles.separator} />
-                    <TextInput style={styles.inputText} placeholder="Karoséria" onChangeText={(text) => setBody(text)} />
+                    <TextInput style={styles.inputText} placeholderTextColor="black" placeholder="Karoséria" onChangeText={(text) => setBody(text)} />
                     <View style={styles.separator} />
-                    <TextInput style={styles.inputText} placeholder="Cena" onChangeText={(text) => setPrice(text)} />
+                    <TextInput style={styles.inputText} placeholderTextColor="black" placeholder="Cena" onChangeText={(text) => setPrice(text)} />
                     <View style={styles.separator} />
-                    <TextInput style={styles.inputText} placeholder="Popis" onChangeText={(text) => setDescription(text)} />
+                    <TextInput style={styles.inputText} placeholderTextColor="black" placeholder="Popis" onChangeText={(text) => setDescription(text)} />
                     <View style={styles.separator} />
                     <View style={{ paddingVertical: 10 }} />
                     <TouchableOpacity

@@ -43,6 +43,7 @@ const ProfileScreen = (props) => {
                 userWs.onmessage = async (e) => {
                     
                     response = JSON.parse(e.data)
+                    console.log(response)
                     //userObj = response   
                     
                     for (var i = 0; i < response[0].own_advertisement.length; i++) {
