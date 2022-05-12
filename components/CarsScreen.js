@@ -3,7 +3,6 @@ import CarItem from './CarItem'
 import CarEdit from './CarEdit'
 import React, { useEffect, useState } from 'react';
 import { StyleSheet, View, FlatList, SafeAreaView, ActivityIndicator, Text} from 'react-native';
-import fetchAPI from '../Api'
 import { ScrollView } from 'react-native-gesture-handler';
 import CarScreen from './CarScreen';
 import { useIsFocused } from '@react-navigation/native';
@@ -15,10 +14,6 @@ const CarsScreen = (props) => {
     const [cars, setCars] = useState([])
     const [isFetching, setIsFetching] = useState(true)
     const isFocused = useIsFocused();
-    
-    useEffect(() => { 
-        fetchCars()
-    }, [])
 
     useEffect(() => {
         isFocused && fetchCars()
@@ -26,11 +21,30 @@ const CarsScreen = (props) => {
 
     const fetchCars = () => {
         setIsFetching(true)
+        let fetchObject = {
+            method: 'GET',
+            headers: {
+                'Content-type': 'application/json'
+            }
+        }
 
-        fetchAPI('api/autobazar/cars', 'GET', {}).then(result => {
-            setCars(result)
-            setIsFetching(false)
-        })
+        let carsWs = new WebSocket('ws://fiit-autobazar-backend.herokuapp.com/api/autobazar/cars')
+        
+        carsWs.onopen = () => {
+            carsWs.send(JSON.stringify(fetchObject))
+        }
+
+        carsWs.onmessage = async (e) => {
+            const response = JSON.parse(e.data)
+            setCars(response)
+            setIsFetching(false) 
+            carsWs.close()
+        }
+
+        /*fetch('https://fiit-autobazar-backend.herokuapp.com/api/autobazar/cars' ).then(response => response.json()).then(response => {
+            setCars(response)
+            setIsFetching(false)       
+        }) */
         
     }
 

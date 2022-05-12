@@ -5,7 +5,6 @@ import React from 'react';
 import { useState } from "react";
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 import { StyleSheet, Text, View, Button, TextInput, Alert, ActivityIndicator, TouchableOpacity} from 'react-native';
-import fetchAPI from '../Api'
 
 const Stack = createStackNavigator()
 
@@ -14,6 +13,7 @@ const LoginScreen = (props) => {
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
     const [isLoading, setIsLoading] = useState(false)
+    
  
     const login = () => {
         if (email == "" || password == "") {
@@ -28,17 +28,31 @@ const LoginScreen = (props) => {
             password: password
         }
 
-        fetchAPI('api/autobazar/users/login', 'POST', bodyObject).then(result => {
-            setIsLoading(false)
+        const fetchObject = {
+            method: 'POST',
+            headers: {
+                'Content-type': 'application/json'
+            },
+            body: bodyObject
+        }
+        
+        let ws = new WebSocket('ws://fiit-autobazar-backend.herokuapp.com/api/autobazar/users/login')
 
-            if (result.id) {
-                //alert(result)
-                props.loggedIn(result.id)
+        ws.onopen = () => {
+            ws.send(JSON.stringify(fetchObject))
+        }
+
+        ws.onmessage = (e) => {
+            const response = JSON.parse(e.data)
+            if (response.id) {
+                props.loggedIn(response.id)
+                ws.close()
             }
             else { //ak uzivatel zada zle heslo alebo meno
                 Alert.alert("Nesprávne údaje", "Údaje, ktoré ste zadali nie sú správne", [{ text: "OK", onPress: () => { } }])
             }
-        })
+        }     
+
     }
     
     return (

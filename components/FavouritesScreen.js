@@ -4,7 +4,7 @@ import CarItem from './CarItem'
 import CarScreen from './CarScreen';
 import { StyleSheet, Text, View, FlatList, SafeAreaView, ActivityIndicator, ScrollView } from 'react-native';
 import { useIsFocused } from '@react-navigation/native';
-import fetchAPI from '../Api'
+
 
 const Stack = createStackNavigator()
 
@@ -15,34 +15,103 @@ const FavouritesScreen = (props) => {
     const isFocused = useIsFocused();
 
     useEffect(() => { 
-        const getCarsObject = async () => {
-            setIsFetching(true)
-    
-            const userBookmarks = await fetchAPI(`api/autobazar/users/${props.userId}` + '/favourites', 'GET', {})
-            setBookmarks(userBookmarks)
+        isFocused && getCarsObject()
+    }, [isFocused])
 
-            
-            let carObjects = []
-            for (var i = 0; i < userBookmarks.length; i++) {
-                let carId = userBookmarks[i]
-                let carObj = await fetchAPI(`api/autobazar/cars/${carId}`, 'GET', {})
-                
-                if (!carObj.errors) {
-                    carObjects.push(carObj)
+    useEffect(() => {
+        //console.log(bookmarkCars.length)
+        if (bookmarkCars.length) {
+            //console.log("fetch false")
+            setIsFetching(false)
+        }
+    }, [bookmarkCars])
+
+    const waitForSocketConnection = (socket, callback) => {
+        setTimeout(
+            function () {
+                if (socket.readyState === 1) {
+                    if (callback != null){
+                        callback();
+                    }
+                } else {
+                    waitForSocketConnection(socket, callback);
                 }
+    
+            }, 5); // wait 5 milisecond for the connection...
+    }
+
+    const getCarsObject = async () => {
+        setIsFetching(true)
+
+        let fetchObject = {
+            method: 'GET',
+            headers: {
+                'Content-type': 'application/json'
             }
-            
-            setBookmarkCars(carObjects)
         }
 
-        isFetching && getCarsObject().then(() => {
-            setIsFetching(false)
-        })
-        
-    }, [isFetching])
+        let usersWs = new WebSocket(`ws://fiit-autobazar-backend.herokuapp.com/api/autobazar/users/${props.userId}` + '/favourites')
+
+        let carObjects = []
+        let carSockets = []
+        let response;
+
+        usersWs.onopen = () => {
+            waitForSocketConnection(usersWs, function () {
+                console.log("favourites user message sent!!!");
+                usersWs.send(JSON.stringify(fetchObject))
+            });
+
+            usersWs.onmessage = async (e) => {
+
+                response = JSON.parse(e.data)
+                //console.log(response)
+                setBookmarks(response)
+                //userObj = response   
+
+                for (var i = 0; i < response.length; i++) {
+
+                    let carId = response[i]
+                    carSockets[i] = new WebSocket(`ws://fiit-autobazar-backend.herokuapp.com/api/autobazar/cars/${carId}`)
+
+                    //let carWs = new WebSocket(`ws://fiit-autobazar-backend.herokuapp.com/api/autobazar/cars/${carId}`)
+                    //let carObj;
+                    let carWs = await carSockets[i]
+                    carWs.onopen = () => {
+                        waitForSocketConnection(carWs, function () {
+                            console.log("profile cars req send!!!");
+                            carWs.send(JSON.stringify(fetchObject))
+                        });
+                    }
+
+                    carWs.onmessage = (e) => {
+                        const carResponse = JSON.parse(e.data)
+
+                        //carObj = response
+                        console.log(carResponse)
+                        if (!carResponse.errors) {
+                            carObjects.push(carResponse)
+                        }
+
+                        if (carObjects.length == response.length) {
+                            setBookmarkCars(carObjects)
+                            usersWs.close()
+                        }
+
+                        carWs.close()
+                    }
+
+                }
+
+            }
+        }
+
+        //const userBookmarks = await fetch(`https://fiit-autobazar-backend.herokuapp.com/api/autobazar/users/${props.userId}` + '/favourites').then(response => response.json())
+        //setBookmarks(userBookmarks)
+
+    }
 
     const renderItem = (item) => {
-        //console.log("id: " + props.userId)
         return (
             <CarItem car={item.item} userId={props.userId}/>
         )

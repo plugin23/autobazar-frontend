@@ -1,7 +1,6 @@
 import { createStackNavigator } from '@react-navigation/stack'
 import React, { useEffect, useState } from 'react';
 import { StyleSheet, Text, View, Button, TextInput, Alert, ActivityIndicator, TouchableOpacity, Dimensions } from 'react-native';
-import fetchAPI from '../Api'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 import * as ImagePicker from 'expo-image-picker';
 import uuid from 'uuid';
@@ -54,23 +53,60 @@ const AddCarScreen = (props) => {
                 body: body,
                 image_photos: [url]
             }
+            
 
-            fetchAPI('api/autobazar/cars', 'POST', bodyObject).then(result => {
+            const fetchObject = {
+                method: 'POST',
+                headers: {
+                    'Content-type': 'application/json'
+                },
+                body: bodyObject
+            }
+            let carsWs = new WebSocket('ws://fiit-autobazar-backend.herokuapp.com/api/autobazar/cars')
 
-                if (result._id) {
-                    setIsAdded(true)
-                    edit_user(result)
+            carsWs.onopen = () => {
+                carsWs.send(JSON.stringify(fetchObject))
+            }
+
+            carsWs.onmessage = (e) => {
+                try{
+                    if(!JSON.parse(e.data).errors){
+                        let response = JSON.parse(e.data)
+                        if (response._id) {
+                            //alert(result)                   
+                            setIsAdded(true)
+                            edit_user(response)
+                            console.log(response)
+                        }
+                    }
+                    else{
+                        Alert.alert("Zle zadané typy inputov")
+                    }
+                   
                 }
-                else {
+                catch(r){
+                    Alert.alert('Error:', r.message)
+                }
+                carsWs.close()
+            }
+
+            /*fetch('https://fiit-autobazar-backend.herokuapp.com/api/autobazar/cars' , fetchObject).then(response => response.json()).then(response => {
+                
+                if (response._id) {
+                    //alert(result)                   
+                    setIsAdded(true)
+                    edit_user(response)
+                }
+                else { //ak uzivatel zada zle heslo alebo meno
                     Alert.alert("Údaje, ktoré ste zadali nie sú správne", [{ text: "OK", onPress: () => { } }])
                 }
-            });
+            }) */       
         }
     }, [url])
 
     const addCar = async () => {
         if (carBrand == "" || engineCap == "" || year == "" || mileage == "" || price == "" || doors == "" || description == "" || body == "" || carModel == "") {
-            Alert.alert("Prosím vyplňte všetky polia", [{ text: "OK", onPress: () => { } }])
+            alert("Prosím vyplňte všetky polia", [{ text: "OK", onPress: () => { } }])
             return
         }
 
@@ -112,23 +148,46 @@ const AddCarScreen = (props) => {
 
 
     const edit_user = (result) => {
-        console.log(result._id)
 
         const bodyObjectUser = {
             own_advertisement: result._id 
         }
-        
-        console.log(bodyObjectUser)
+           
 
-        fetchAPI(`api/autobazar/users/${result.author}/own_advertisement`, 'PUT', bodyObjectUser).then(result => {
+        const fetchObject = {
+            method: 'PUT',
+            headers: {
+                'Content-type': 'application/json'
+            },
+            body: bodyObjectUser
+        }
+        let usersWs = new WebSocket(`ws://fiit-autobazar-backend.herokuapp.com/api/autobazar/users/${result.author}/own_advertisement`)
 
-            if (result) {
-                alert('pridane aj userovi')                
+        usersWs.onopen = () => {
+            usersWs.send(JSON.stringify(fetchObject))
+        }
+
+        usersWs.onmessage = (e) => {
+            let response = JSON.parse(e.data)
+            if (response.id) {
+                //alert(result)
+                props.loggedIn(response.id)
             }
             else { //ak uzivatel zada zle heslo alebo meno
-                Alert.alert("Nepodarilo sa vložiť užívateľovi tento inzerát", "Údaje, ktoré ste zadali nie sú správne", [{ text: "OK", onPress: () => { } }])
+                Alert.alert("Nesprávne údaje", "Údaje, ktoré ste zadali nie sú správne", [{ text: "OK", onPress: () => { } }])
             }
-        })
+            usersWs.close()
+        }
+        
+        /*fetch(`https://fiit-autobazar-backend.herokuapp.com/api/autobazar/users/${result.author}/own_advertisement` , fetchObject).then(response => response.json()).then(response => {
+            if (response.id) {
+                //alert(result)
+                props.loggedIn(response.id)
+            }
+            else { //ak uzivatel zada zle heslo alebo meno
+                Alert.alert("Nesprávne údaje", "Údaje, ktoré ste zadali nie sú správne", [{ text: "OK", onPress: () => { } }])
+            }
+        })*/
     }
 
     return (

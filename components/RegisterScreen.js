@@ -2,7 +2,6 @@ import { StatusBar } from 'expo-status-bar';
 import React, { useState } from 'react';
 import { StyleSheet, Text, View, Button, TextInput, Alert, ActivityIndicator, TouchableOpacity } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
-import fetchAPI from '../Api'
 
 const RegisterScreen = (props) => {
 
@@ -29,18 +28,43 @@ const RegisterScreen = (props) => {
             phone_number: phoneNumber
         }
 
-        fetchAPI('api/autobazar/users', 'POST', bodyObject).then(result => {
-            console.log(bodyObject)
-            console.log(result)
+        const fetchObject = {
+            method: 'POST',
+            headers: {
+                'Content-type': 'application/json'
+            },
+            body: bodyObject
+        }
+
+        let usersWs = new WebSocket('ws://fiit-autobazar-backend.herokuapp.com/api/autobazar/users')
+
+        usersWs.onopen = () => {
+            usersWs.send(JSON.stringify(fetchObject))
+        }
+
+        usersWs.onmessage = (e) => {
+            const response = JSON.parse(e.data)
             setIsLoading(false)
-            if(result.errors) {
+            if(response.errors) {
                 Alert.alert("Užívateľ existuje", "Používateľ s týmto emailom už existuje", [{text:"OK", onPress: () => {}}])
             }
             else { //ak je uspesna registracia
                 Alert.alert("Úspešne zaregistrovaný", "Vaše konto bolo úspešne vytvorené, pokračujte prihlásením...")
                 props.showRegister()
             }
-        })
+            usersWs.close()
+        }
+
+        /*fetch('https://fiit-autobazar-backend.herokuapp.com/api/autobazar/users' , fetchObject).then(response => response.json()).then(response => {
+            setIsLoading(false)
+            if(response.errors) {
+                Alert.alert("Užívateľ existuje", "Používateľ s týmto emailom už existuje", [{text:"OK", onPress: () => {}}])
+            }
+            else { //ak je uspesna registracia
+                Alert.alert("Úspešne zaregistrovaný", "Vaše konto bolo úspešne vytvorené, pokračujte prihlásením...")
+                props.showRegister()
+            }
+        }) */
     }
 
     return (
